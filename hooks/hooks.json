@@ -5,7 +5,7 @@
         "matcher": "*",
         "handler": {
           "type": "command",
-          "command": "command -v arbiterx >/dev/null 2>&1 && echo '{\"context\": \"ArbiterX engineering mode active. Quality gate will score all generated code. Enforcing: type safety, error handling, YAGNI, resource cleanup, no magic numbers.\"}' || echo '{\"context\": \"ArbiterX not installed. Run: pip install arbiterx\", \"error\": true}'"
+          "command": "command -v arbiterx >/dev/null 2>&1 && echo '{\"context\": \"ArbiterX engineering mode active. Quality gate will score all generated code. Enforcing: type safety, error handling, YAGNI, resource cleanup, no magic numbers.\"}' || echo '{\"context\": \"ArbiterX not installed. Run: pip install arbiterx-ai\", \"error\": true}'"
         }
       }
     ],

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "author": "Neel Patel",
   "homepage": "https://github.com/NeelPrime/arbiterx",
-  "install": "pip install arbiterx",
+  "install": "pip install arbiterx-ai",
   "capabilities": [
     "code-quality-gate",
     "codebase-mapping",

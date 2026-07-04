@@ -31,6 +31,6 @@
 
 ## Quality Check
 ```bash
-pip install arbiterx
+pip install arbiterx-ai
 arbiterx gate --file <file>   # Score 0-100, reject below 70
 ```

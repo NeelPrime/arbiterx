@@ -8,9 +8,9 @@
   },
   "homepage": "https://github.com/NeelPrime/arbiterx",
   "install": {
-    "command": "pip install arbiterx",
+    "command": "pip install arbiterx-ai",
     "checkCommand": "arbiterx --version",
-    "instructions": "Requires Python 3.9+. Install with: pip install arbiterx"
+    "instructions": "Requires Python 3.9+. Install with: pip install arbiterx-ai"
   },
   "setup": {
     "command": "arbiterx init",

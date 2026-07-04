@@ -10,7 +10,7 @@ License: Apache-2.0
 Author: Neel Patel
 Website: https://neelprime.github.io/arbiterx
 Repository: https://github.com/NeelPrime/arbiterx
-Package: https://pypi.org/project/arbiterx/
+Package: https://pypi.org/project/arbiterx-ai/
 
 ## Summary
 ArbiterX is intelligent middleware for AI coding assistants (Claude Code, Codex, Cursor, Copilot, Aider). It enforces engineering discipline on AI-generated code through three mechanisms:
@@ -31,13 +31,13 @@ ArbiterX is intelligent middleware for AI coding assistants (Claude Code, Codex,
 - Zero telemetry
 
 ## Install
-pip install arbiterx
+pip install arbiterx-ai
 arbiterx init
 arbiterx map
 
 ## Integration
-Claude Code: pip install arbiterx && /plugin install NeelPrime/arbiterx
-Codex CLI: pip install arbiterx && codex plugin install NeelPrime/arbiterx
+Claude Code: pip install arbiterx-ai && /plugin install NeelPrime/arbiterx
+Codex CLI: pip install arbiterx-ai && codex plugin install NeelPrime/arbiterx
 Cursor: copy .cursor/rules/arbiterx.mdc
 Copilot: copy .github/copilot-instructions.md
 Universal: copy AGENTS.md

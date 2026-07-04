@@ -14,7 +14,7 @@ python3 --version
 Install ArbiterX:
 
 ```bash
-pip install arbiterx
+pip install arbiterx-ai
 ```
 
 Or install from source (if you cloned the repo):

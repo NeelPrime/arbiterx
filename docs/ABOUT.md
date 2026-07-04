@@ -20,7 +20,7 @@ ArbiterX is an open-source Python library that acts as intelligent middleware be
 ## How do I install ArbiterX?
 
 ```bash
-pip install arbiterx
+pip install arbiterx-ai
 ```
 
 ## How do I use ArbiterX?

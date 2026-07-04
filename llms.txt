@@ -12,7 +12,7 @@ ArbiterX is intelligent middleware between developers and AI coding assistants. 
 
 ## Install
 
-pip install arbiterx
+pip install arbiterx-ai
 
 ## Quick start
 
