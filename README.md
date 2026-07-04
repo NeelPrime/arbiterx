@@ -143,6 +143,26 @@ def get_user(user_id: int, conn: Connection) -> Optional[User]:
 pip install arbiterx-gate
 ```
 
+**Using Python 3 specifically:**
+
+```bash
+pip3 install arbiterx-gate
+```
+
+**Permission issues? Install for your user:**
+
+```bash
+pip install --user arbiterx-gate
+```
+
+**In a virtual environment (recommended):**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+pip install arbiterx-gate
+```
+
 **From source:**
 
 ```bash
