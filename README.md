@@ -84,29 +84,29 @@ def get_user(user_id: int, conn: Connection) -> Optional[User]:
 ## 🏗️ What ArbiterX Does
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                        YOUR AI TOOL                                │
-│  Claude Code • Codex • Cursor • Copilot • Aider • Windsurf       │
-└───────────────────────────────┬──────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                       YOUR AI TOOL                             │
+│  Claude Code • Codex • Cursor • Copilot • Aider • Windsurf   │
+└───────────────────────────────┬────────────────────────────────┘
                                 │
                                 ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                         ARBITERX                                   │
-│                                                                   │
-│   ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
-│   │ ① DECIDE    │  │ ② COMPRESS  │  │ ③ ENFORCE               │ │
-│   │             │  │             │  │                         │ │
-│   │ Route to    │  │ Send 2KB    │  │ Score output 0-100      │ │
-│   │ right model │  │ not 200KB   │  │ Reject if below 70      │ │
-│   │             │  │             │  │                         │ │
-│   │ trivial→    │  │ symbols +   │  │ ✓ security              │ │
-│   │   haiku     │  │ signatures  │  │ ✓ robustness            │ │
-│   │ hard→opus   │  │ only        │  │ ✓ efficiency            │ │
-│   └─────────────┘  └─────────────┘  └─────────────────────────┘ │
-└───────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                         ARBITERX                               │
+│                                                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐ │
+│  │ ① DECIDE     │  │ ② COMPRESS   │  │ ③ ENFORCE            │ │
+│  │              │  │              │  │                      │ │
+│  │ Route to     │  │ Send 2KB     │  │ Score output 0-100   │ │
+│  │ right model  │  │ not 200KB    │  │ Reject if below 70   │ │
+│  │              │  │              │  │                      │ │
+│  │ trivial→     │  │ symbols +    │  │ ✓ security           │ │
+│  │   haiku      │  │ signatures   │  │ ✓ robustness         │ │
+│  │ hard→opus    │  │ only         │  │ ✓ efficiency         │ │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘ │
+└────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
-                    Clean, Minimal, Unbreakable Code
+                  Clean, Minimal, Unbreakable Code
 ```
 
 ---
@@ -248,18 +248,18 @@ Every task gets classified:
 Every AI output gets scored:
 
 ```
-┌─────────────────────────────────────────────┐
-│  QUALITY GATE                                │
-│                                             │
-│  Security ·····  ✓ No hardcoded secrets     │
-│  Robustness ···  ✓ Errors handled           │
-│  Efficiency ···  ✓ No O(n²) patterns        │
-│  Types ········  ✓ All functions typed       │
-│  Style ········  ✓ Clean naming             │
-│  Complete ·····  ✓ No TODOs left            │
-│                                             │
-│  Score: 100/100  ✓ PASSED                   │
-└─────────────────────────────────────────────┘
+┌───────────────────────────────────────────┐
+│  QUALITY GATE                             │
+│                                           │
+│  Security ·····  ✓ No hardcoded secrets   │
+│  Robustness ···  ✓ Errors handled         │
+│  Efficiency ···  ✓ No O(n²) patterns      │
+│  Types ········  ✓ All functions typed     │
+│  Style ········  ✓ Clean naming           │
+│  Complete ·····  ✓ No TODOs left          │
+│                                           │
+│  Score: 100/100  ✓ PASSED                 │
+└───────────────────────────────────────────┘
 ```
 
 ---
