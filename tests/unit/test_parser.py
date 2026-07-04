@@ -168,9 +168,7 @@ class TestLanguageDetection:
             ("util.cpp", "cpp"),
         ],
     )
-    def test_detect_language_known_extensions(
-        self, filename: str, expected_language: str
-    ) -> None:
+    def test_detect_language_known_extensions(self, filename: str, expected_language: str) -> None:
         """Known file extensions should map to the correct language."""
         result = detect_language(Path(filename))
         assert result == expected_language

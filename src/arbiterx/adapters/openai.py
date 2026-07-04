@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
@@ -36,9 +37,7 @@ class OpenAIAdapter(ModelAdapter):
             "Content-Type": "application/json",
         }
 
-    def _build_request(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> dict[str, Any]:
+    def _build_request(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         """Build the OpenAI API request body."""
         body: dict[str, Any] = {
             "model": self.model_name,
@@ -75,28 +74,30 @@ class OpenAIAdapter(ModelAdapter):
         body = self._build_request(messages, **kwargs)
         body["stream"] = True
 
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            async with client.stream(
+        async with (
+            httpx.AsyncClient(timeout=120.0) as client,
+            client.stream(
                 "POST",
                 f"{self.base_url}/chat/completions",
                 headers=self._headers(),
                 json=body,
-            ) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if not line.startswith("data: "):
-                        continue
-                    payload = line[6:]
-                    if payload == "[DONE]":
-                        break
-                    try:
-                        event = json.loads(payload)
-                        delta = event["choices"][0].get("delta", {})
-                        content = delta.get("content", "")
-                        if content:
-                            yield content
-                    except (json.JSONDecodeError, KeyError, IndexError):
-                        continue
+            ) as response,
+        ):
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if not line.startswith("data: "):
+                    continue
+                payload = line[6:]
+                if payload == "[DONE]":
+                    break
+                try:
+                    event = json.loads(payload)
+                    delta = event["choices"][0].get("delta", {})
+                    content = delta.get("content", "")
+                    if content:
+                        yield content
+                except (json.JSONDecodeError, KeyError, IndexError):
+                    continue
 
     def format_messages(self, state: ConversationState) -> list[dict[str, str]]:
         """Format state for OpenAI's Chat Completions API.

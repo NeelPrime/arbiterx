@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional
+from typing import Any
 
 
 class TaskType(Enum):
@@ -29,26 +29,26 @@ class TaskType(Enum):
 class Complexity(Enum):
     """Estimated cognitive complexity of a task."""
 
-    TRIVIAL = auto()   # One-liner, simple lookup
-    LOW = auto()       # Single function, straightforward
-    MEDIUM = auto()    # Multi-function, moderate reasoning
-    HIGH = auto()      # Multi-file, significant reasoning
-    EXPERT = auto()    # Architectural, cross-system
+    TRIVIAL = auto()  # One-liner, simple lookup
+    LOW = auto()  # Single function, straightforward
+    MEDIUM = auto()  # Multi-function, moderate reasoning
+    HIGH = auto()  # Multi-file, significant reasoning
+    EXPERT = auto()  # Architectural, cross-system
 
 
 class ContextScope(Enum):
     """How much codebase context is needed."""
 
-    FILE = auto()      # Single file is sufficient
-    MODULE = auto()    # Need surrounding module/package
-    REPO = auto()      # Need broad repository context
+    FILE = auto()  # Single file is sufficient
+    MODULE = auto()  # Need surrounding module/package
+    REPO = auto()  # Need broad repository context
 
 
 class Latency(Enum):
     """Expected latency tolerance."""
 
     INTERACTIVE = auto()  # User waiting, sub-5s ideal
-    BATCH = auto()        # Async acceptable, quality over speed
+    BATCH = auto()  # Async acceptable, quality over speed
 
 
 @dataclass(frozen=True)
@@ -66,18 +66,67 @@ class ClassifiedTask:
 # --- Heuristic pattern tables ---
 
 _TYPE_PATTERNS: list[tuple[re.Pattern, TaskType]] = [
-    (re.compile(r"\b(write|create|generate|implement|build|add)\b.*\b(function|class|method|module|api|endpoint|component|system|feature|service|handler|page|route|view)", re.I), TaskType.CODE_GENERATION),
-    (re.compile(r"\b(write|create|generate|implement|build|add)\b.*\b(a|an|the|new)\b", re.I), TaskType.CODE_GENERATION),
-    (re.compile(r"\b(review|critique|check|audit)\b.*\b(code|pr|pull request|diff|changes)", re.I), TaskType.CODE_REVIEW),
-    (re.compile(r"\b(debug|fix|error|bug|issue|broken|crash|traceback|exception)\b", re.I), TaskType.DEBUGGING),
-    (re.compile(r"\b(refactor|restructure|clean\s*up|simplify|extract|rename|move)\b", re.I), TaskType.REFACTORING),
-    (re.compile(r"\b(explain|what\s+(is|does|are)|how\s+(does|do|is)|why\s+(does|is|do)|describe|clarify|walk\s+(me\s+)?through|tell\s+me\s+about)\b", re.I), TaskType.EXPLANATION),
-    (re.compile(r"\b(document|docstring|readme|jsdoc|comment|annotate)\b", re.I), TaskType.DOCUMENTATION),
-    (re.compile(r"\b(tests?|spec|unittest|pytest|jest|coverage|assert|mock)\b", re.I), TaskType.TESTING),
-    (re.compile(r"\b(architect|design|system\s*design|scalab|microservice|schema|database\s*design|infrastructure)\b", re.I), TaskType.ARCHITECTURE),
-    (re.compile(r"\b(config|configure|setup|install|deploy|ci|cd|docker|yaml|toml|env)\b", re.I), TaskType.CONFIGURATION),
-    (re.compile(r"\b(research|compare|evaluate|survey|benchmark|pros\s*and\s*cons|alternatives)\b", re.I), TaskType.RESEARCH),
-    (re.compile(r"\b(translate|convert|port|migrate)\b.*\b(to|from|into)\b", re.I), TaskType.TRANSLATION),
+    (
+        re.compile(
+            r"\b(write|create|generate|implement|build|add)\b.*\b(function|class|method|module|api|endpoint|component|system|feature|service|handler|page|route|view)",
+            re.I,
+        ),
+        TaskType.CODE_GENERATION,
+    ),
+    (
+        re.compile(r"\b(write|create|generate|implement|build|add)\b.*\b(a|an|the|new)\b", re.I),
+        TaskType.CODE_GENERATION,
+    ),
+    (
+        re.compile(
+            r"\b(review|critique|check|audit)\b.*\b(code|pr|pull request|diff|changes)", re.I
+        ),
+        TaskType.CODE_REVIEW,
+    ),
+    (
+        re.compile(r"\b(debug|fix|error|bug|issue|broken|crash|traceback|exception)\b", re.I),
+        TaskType.DEBUGGING,
+    ),
+    (
+        re.compile(r"\b(refactor|restructure|clean\s*up|simplify|extract|rename|move)\b", re.I),
+        TaskType.REFACTORING,
+    ),
+    (
+        re.compile(
+            r"\b(explain|what\s+(is|does|are)|how\s+(does|do|is)|why\s+(does|is|do)|describe|clarify|walk\s+(me\s+)?through|tell\s+me\s+about)\b",
+            re.I,
+        ),
+        TaskType.EXPLANATION,
+    ),
+    (
+        re.compile(r"\b(document|docstring|readme|jsdoc|comment|annotate)\b", re.I),
+        TaskType.DOCUMENTATION,
+    ),
+    (
+        re.compile(r"\b(tests?|spec|unittest|pytest|jest|coverage|assert|mock)\b", re.I),
+        TaskType.TESTING,
+    ),
+    (
+        re.compile(
+            r"\b(architect|design|system\s*design|scalab|microservice|schema|database\s*design|infrastructure)\b",
+            re.I,
+        ),
+        TaskType.ARCHITECTURE,
+    ),
+    (
+        re.compile(r"\b(config|configure|setup|install|deploy|ci|cd|docker|yaml|toml|env)\b", re.I),
+        TaskType.CONFIGURATION,
+    ),
+    (
+        re.compile(
+            r"\b(research|compare|evaluate|survey|benchmark|pros\s*and\s*cons|alternatives)\b", re.I
+        ),
+        TaskType.RESEARCH,
+    ),
+    (
+        re.compile(r"\b(translate|convert|port|migrate)\b.*\b(to|from|into)\b", re.I),
+        TaskType.TRANSLATION,
+    ),
 ]
 
 _COMPLEXITY_SIGNALS: dict[Complexity, list[re.Pattern]] = {
@@ -96,19 +145,25 @@ _COMPLEXITY_SIGNALS: dict[Complexity, list[re.Pattern]] = {
         re.compile(r"\b(across|entire|whole)\s+(codebase|project|repo)", re.I),
     ],
     Complexity.EXPERT: [
-        re.compile(r"\b(architect|system\s*design|distributed|scalab|migration\s*strategy)\b", re.I),
+        re.compile(
+            r"\b(architect|system\s*design|distributed|scalab|migration\s*strategy)\b", re.I
+        ),
         re.compile(r"\b(security\s*audit|performance\s*optimization|consensus|protocol)\b", re.I),
     ],
 }
 
 _SCOPE_PATTERNS: list[tuple[re.Pattern, ContextScope]] = [
-    (re.compile(r"\b(repo|project|codebase|entire|all\s*files|cross.?module)\b", re.I), ContextScope.REPO),
+    (
+        re.compile(r"\b(repo|project|codebase|entire|all\s*files|cross.?module)\b", re.I),
+        ContextScope.REPO,
+    ),
     (re.compile(r"\b(module|package|directory|folder|namespace)\b", re.I), ContextScope.MODULE),
     (re.compile(r"\b(file|function|class|method|line|snippet)\b", re.I), ContextScope.FILE),
 ]
 
 # Plugin extension point: custom classifier functions
 _CUSTOM_CLASSIFIERS: dict[str, Any] = {}
+
 
 class TaskClassifier:
     """Analyzes a task string and produces a structured classification.
@@ -187,7 +242,13 @@ class TaskClassifier:
         # If explicit signals found, use highest scoring
         max_score = max(scores.values())
         if max_score > 0:
-            for complexity in [Complexity.EXPERT, Complexity.HIGH, Complexity.MEDIUM, Complexity.LOW, Complexity.TRIVIAL]:
+            for complexity in [
+                Complexity.EXPERT,
+                Complexity.HIGH,
+                Complexity.MEDIUM,
+                Complexity.LOW,
+                Complexity.TRIVIAL,
+            ]:
                 if scores[complexity] == max_score:
                     return complexity
 

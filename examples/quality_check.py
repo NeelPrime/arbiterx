@@ -8,12 +8,12 @@ Run with:
     python examples/quality_check.py
 """
 
-from arbiterx.gate import QualityGate, GateResult
-from arbiterx.ladder.interrogator import SelfInterrogator, EngineeringReport
+from arbiterx.gate import GateResult, QualityGate
+from arbiterx.ladder.interrogator import EngineeringReport, SelfInterrogator
 
 # ─── Code Snippets ────────────────────────────────────────────────────────────
 
-BAD_CODE = '''\
+BAD_CODE = """\
 import os, sys, json, re, hashlib, base64
 
 def f(x):
@@ -24,7 +24,7 @@ def f(x):
     # TODO: implement properly
     data = eval(x)
     return c
-'''
+"""
 
 MEDIUM_CODE = '''\
 import json
@@ -100,6 +100,7 @@ class UserRepository:
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
+
 def print_gate_result(label: str, result: GateResult) -> None:
     """Pretty-print a QualityGate result."""
     status = "✅ PASS" if result.passed else "❌ FAIL"
@@ -121,7 +122,9 @@ def print_enforcement_report(label: str, report: EngineeringReport) -> None:
         print(f"  Violations ({len(report.violations)}):")
         for v in report.violations[:5]:
             line_info = f"L{v.line_hint}" if v.line_hint else "—"
-            print(f"    [{v.severity.value.upper():7s}] {v.arbiterx_name:20s} {line_info}: {v.description}")
+            print(
+                f"    [{v.severity.value.upper():7s}] {v.arbiterx_name:20s} {line_info}: {v.description}"
+            )
         if len(report.violations) > 5:
             print(f"    ... and {len(report.violations) - 5} more")
     if report.summary:

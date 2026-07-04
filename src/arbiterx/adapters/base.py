@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
-from arbiterx.router.handoff import ConversationState, Message
+from arbiterx.router.handoff import ConversationState
 
 
 class ModelAdapter(ABC):
@@ -35,9 +36,7 @@ class ModelAdapter(ABC):
         self.base_url: str = kwargs.get("base_url", "")
 
     @abstractmethod
-    async def complete(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> str:
+    async def complete(self, messages: list[dict[str, str]], **kwargs: Any) -> str:
         """Send messages and return a complete response.
 
         Args:
@@ -53,9 +52,7 @@ class ModelAdapter(ABC):
         ...
 
     @abstractmethod
-    async def stream(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> AsyncIterator[str]:
+    async def stream(self, messages: list[dict[str, str]], **kwargs: Any) -> AsyncIterator[str]:
         """Stream response tokens as they are generated.
 
         Args:

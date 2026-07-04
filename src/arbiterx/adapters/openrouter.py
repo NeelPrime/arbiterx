@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
@@ -25,7 +26,9 @@ class OpenRouterAdapter(ModelAdapter):
 
     DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
 
-    def __init__(self, model_name: str = "anthropic/claude-sonnet-4-20250514", **kwargs: Any) -> None:
+    def __init__(
+        self, model_name: str = "anthropic/claude-sonnet-4-20250514", **kwargs: Any
+    ) -> None:
         api_key = kwargs.pop("api_key", "") or os.environ.get("OPENROUTER_API_KEY", "")
         super().__init__(model_name, api_key=api_key, **kwargs)
         if not self.base_url:
@@ -41,9 +44,7 @@ class OpenRouterAdapter(ModelAdapter):
             "X-Title": self.app_name,
         }
 
-    def _build_request(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> dict[str, Any]:
+    def _build_request(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         """Build the OpenRouter request body (OpenAI-compatible)."""
         body: dict[str, Any] = {
             "model": self.model_name,
@@ -84,28 +85,30 @@ class OpenRouterAdapter(ModelAdapter):
         body = self._build_request(messages, **kwargs)
         body["stream"] = True
 
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            async with client.stream(
+        async with (
+            httpx.AsyncClient(timeout=120.0) as client,
+            client.stream(
                 "POST",
                 f"{self.base_url}/chat/completions",
                 headers=self._headers(),
                 json=body,
-            ) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if not line.startswith("data: "):
-                        continue
-                    payload = line[6:]
-                    if payload == "[DONE]":
-                        break
-                    try:
-                        event = json.loads(payload)
-                        delta = event["choices"][0].get("delta", {})
-                        content = delta.get("content", "")
-                        if content:
-                            yield content
-                    except (json.JSONDecodeError, KeyError, IndexError):
-                        continue
+            ) as response,
+        ):
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if not line.startswith("data: "):
+                    continue
+                payload = line[6:]
+                if payload == "[DONE]":
+                    break
+                try:
+                    event = json.loads(payload)
+                    delta = event["choices"][0].get("delta", {})
+                    content = delta.get("content", "")
+                    if content:
+                        yield content
+                except (json.JSONDecodeError, KeyError, IndexError):
+                    continue
 
     def format_messages(self, state: ConversationState) -> list[dict[str, str]]:
         """Format state for OpenRouter's API (OpenAI-compatible)."""

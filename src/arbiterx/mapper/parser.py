@@ -38,7 +38,7 @@ class Edge:
 
     source: str  # file path of the referencing file
     target: str  # name of the referenced symbol
-    kind: str    # "calls", "imports", "inherits", "uses"
+    kind: str  # "calls", "imports", "inherits", "uses"
     file_path: str
     line: int
 
@@ -249,16 +249,18 @@ class TreeSitterParser:
                 # Determine parent class/scope
                 parent_name = self._find_parent_scope(node, source)
 
-                symbols.append(Symbol(
-                    name=name,
-                    kind=kind,
-                    file_path=file_path,
-                    line_start=node.start_point[0] + 1,
-                    line_end=(def_node.end_point[0] + 1) if def_node else node.end_point[0] + 1,
-                    signature=signature,
-                    docstring=docstring,
-                    parent=parent_name,
-                ))
+                symbols.append(
+                    Symbol(
+                        name=name,
+                        kind=kind,
+                        file_path=file_path,
+                        line_start=node.start_point[0] + 1,
+                        line_end=(def_node.end_point[0] + 1) if def_node else node.end_point[0] + 1,
+                        signature=signature,
+                        docstring=docstring,
+                        parent=parent_name,
+                    )
+                )
         else:
             # Older tree-sitter returns list of (node, capture_name) tuples
             for node, capture_name in captures:
@@ -275,16 +277,18 @@ class TreeSitterParser:
                 docstring = self._extract_docstring(def_node, source, language)
                 parent_name = self._find_parent_scope(node, source)
 
-                symbols.append(Symbol(
-                    name=name,
-                    kind=kind,
-                    file_path=file_path,
-                    line_start=node.start_point[0] + 1,
-                    line_end=def_node.end_point[0] + 1,
-                    signature=signature,
-                    docstring=docstring,
-                    parent=parent_name,
-                ))
+                symbols.append(
+                    Symbol(
+                        name=name,
+                        kind=kind,
+                        file_path=file_path,
+                        line_start=node.start_point[0] + 1,
+                        line_end=def_node.end_point[0] + 1,
+                        signature=signature,
+                        docstring=docstring,
+                        parent=parent_name,
+                    )
+                )
 
         return symbols
 
@@ -308,16 +312,18 @@ class TreeSitterParser:
                 signature = self._extract_signature(node, source)
                 docstring = self._extract_docstring(node, source, language)
 
-                symbols.append(Symbol(
-                    name=name,
-                    kind=kind,
-                    file_path=file_path,
-                    line_start=node.start_point[0] + 1,
-                    line_end=node.end_point[0] + 1,
-                    signature=signature,
-                    docstring=docstring,
-                    parent=parent,
-                ))
+                symbols.append(
+                    Symbol(
+                        name=name,
+                        kind=kind,
+                        file_path=file_path,
+                        line_start=node.start_point[0] + 1,
+                        line_end=node.end_point[0] + 1,
+                        signature=signature,
+                        docstring=docstring,
+                        parent=parent,
+                    )
+                )
 
                 # If it's a class, recurse with this as parent
                 if "class" in node_type:
@@ -349,26 +355,30 @@ class TreeSitterParser:
             # Extract the function/method being called
             callee = self._extract_callee_name(node, source)
             if callee and len(callee) > 1:
-                edges.append(Edge(
-                    source=file_path,
-                    target=callee,
-                    kind="calls",
-                    file_path=file_path,
-                    line=node.start_point[0] + 1,
-                ))
+                edges.append(
+                    Edge(
+                        source=file_path,
+                        target=callee,
+                        kind="calls",
+                        file_path=file_path,
+                        line=node.start_point[0] + 1,
+                    )
+                )
 
         elif node_type in _IMPORT_NODE_TYPES:
             # Extract imported names
             imported = self._extract_import_names(node, source)
             for name in imported:
                 if name and len(name) > 1:
-                    edges.append(Edge(
-                        source=file_path,
-                        target=name,
-                        kind="imports",
-                        file_path=file_path,
-                        line=node.start_point[0] + 1,
-                    ))
+                    edges.append(
+                        Edge(
+                            source=file_path,
+                            target=name,
+                            kind="imports",
+                            file_path=file_path,
+                            line=node.start_point[0] + 1,
+                        )
+                    )
 
         for child in node.children:
             self._walk_for_references(child, source, file_path, edges)
@@ -378,15 +388,19 @@ class TreeSitterParser:
     def _node_text(self, node: Any, source: bytes) -> str:
         """Extract the text content of a node."""
         try:
-            return source[node.start_byte:node.end_byte].decode("utf-8", errors="replace")
+            return source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
         except (AttributeError, TypeError):
             return ""
 
     def _find_name_child(self, node: Any, source: bytes) -> str:
         """Find the 'name' child of a definition node."""
         for child in node.children:
-            if child.type in ("identifier", "type_identifier", "property_identifier",
-                             "field_identifier"):
+            if child.type in (
+                "identifier",
+                "type_identifier",
+                "property_identifier",
+                "field_identifier",
+            ):
                 return self._node_text(child, source)
             # For declarators (C/C++)
             if "declarator" in child.type:
@@ -422,7 +436,7 @@ class TreeSitterParser:
             idx = sig.find(marker)
             if idx > 0 and marker == ":":
                 # For Python, include the colon but not the body
-                sig = sig[:idx + 1]
+                sig = sig[: idx + 1]
                 break
             elif idx > 0:
                 sig = sig[:idx].rstrip()
@@ -482,7 +496,6 @@ class TreeSitterParser:
     def _extract_import_names(self, node: Any, source: bytes) -> list[str]:
         """Extract all imported symbol names from an import node."""
         names: list[str] = []
-        text = self._node_text(node, source)
 
         # Generic extraction: find identifier-like children
         for child in node.children:

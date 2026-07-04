@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from arbiterx.router.classifier import TaskClassifier, TaskType, ClassifiedTask
+from arbiterx.router.classifier import ClassifiedTask, TaskClassifier, TaskType
 
 
 class TestTaskClassifier:

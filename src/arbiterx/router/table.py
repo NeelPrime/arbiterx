@@ -13,7 +13,6 @@ else:
         tomllib = None  # type: ignore[assignment]
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from arbiterx.router.classifier import ClassifiedTask, Complexity, ContextScope, Latency, TaskType
 
@@ -27,12 +26,12 @@ class RoutingRule:
     fallback: list[str] = field(default_factory=list)
 
     # Match conditions (None = match any)
-    task_types: Optional[list[TaskType]] = None
-    min_complexity: Optional[Complexity] = None
-    max_complexity: Optional[Complexity] = None
-    context_scopes: Optional[list[ContextScope]] = None
-    latency: Optional[Latency] = None
-    max_tokens: Optional[int] = None
+    task_types: list[TaskType] | None = None
+    min_complexity: Complexity | None = None
+    max_complexity: Complexity | None = None
+    context_scopes: list[ContextScope] | None = None
+    latency: Latency | None = None
+    max_tokens: int | None = None
 
     def matches(self, task: ClassifiedTask) -> bool:
         """Check if this rule matches the given classified task."""
@@ -98,7 +97,7 @@ class RoutingTable:
         min_complexity = "EXPERT"
     """
 
-    def __init__(self, config_path: Optional[Path] = None) -> None:
+    def __init__(self, config_path: Path | None = None) -> None:
         """Initialize the routing table.
 
         Args:
@@ -115,7 +114,7 @@ class RoutingTable:
         if config_path and config_path.exists():
             self._load(config_path)
 
-    def _find_config(self) -> Optional[Path]:
+    def _find_config(self) -> Path | None:
         """Search common locations for arbiterx.toml."""
         candidates = [
             Path.cwd() / "arbiterx.toml",

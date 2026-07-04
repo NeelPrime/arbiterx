@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass, field, asdict
-from typing import Any, Optional
+from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass
@@ -117,7 +117,7 @@ class ContextHandoff:
         state: ConversationState,
         target_model: str,
         reason: str = "",
-        max_context_tokens: Optional[int] = None,
+        max_context_tokens: int | None = None,
     ) -> ConversationState:
         """Prepare state for handoff to a new model.
 

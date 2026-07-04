@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -148,7 +147,7 @@ class SecurityChecker:
     - subprocess with shell=True
     """
 
-    def check(self, code: str) -> List[SecurityIssue]:
+    def check(self, code: str) -> list[SecurityIssue]:
         """Run all security checks on the given code.
 
         Args:
@@ -157,7 +156,7 @@ class SecurityChecker:
         Returns:
             List of SecurityIssue instances found.
         """
-        issues: List[SecurityIssue] = []
+        issues: list[SecurityIssue] = []
         lines = code.splitlines()
 
         for line_num, line in enumerate(lines, start=1):

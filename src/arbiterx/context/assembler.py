@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 
 class CodebaseMap(Protocol):
@@ -14,7 +14,7 @@ class CodebaseMap(Protocol):
         """Query the map for relevant code snippets."""
         ...
 
-    def get_file_summary(self, path: str) -> Optional[str]:
+    def get_file_summary(self, path: str) -> str | None:
         """Get a summary of a file's contents."""
         ...
 
@@ -73,8 +73,8 @@ class ContextAssembler:
     def assemble(
         self,
         query: str,
-        codebase_map: Optional[CodebaseMap] = None,
-        file_paths: Optional[list[str]] = None,
+        codebase_map: CodebaseMap | None = None,
+        file_paths: list[str] | None = None,
         top_k: int = 20,
     ) -> AssembledContext:
         """Assemble context for a given query within the token budget."""
@@ -121,7 +121,7 @@ class ContextAssembler:
             chunk_type=result.get("type", "code"),
         )
 
-    def _load_file_chunk(self, path: str) -> Optional[ContextChunk]:
+    def _load_file_chunk(self, path: str) -> ContextChunk | None:
         """Load a file from disk as a context chunk."""
         file_path = Path(path)
         if not file_path.exists() or not file_path.is_file():

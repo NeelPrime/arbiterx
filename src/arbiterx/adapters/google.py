@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
@@ -30,9 +31,7 @@ class GoogleAdapter(ModelAdapter):
         if not self.base_url:
             self.base_url = self.DEFAULT_BASE_URL
 
-    def _build_request(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> dict[str, Any]:
+    def _build_request(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         """Build the Gemini API request body.
 
         Gemini uses 'user' and 'model' roles with 'parts' content structure.
@@ -45,10 +44,12 @@ class GoogleAdapter(ModelAdapter):
                 system_instruction = msg["content"]
             else:
                 role = "model" if msg["role"] == "assistant" else "user"
-                contents.append({
-                    "role": role,
-                    "parts": [{"text": msg["content"]}],
-                })
+                contents.append(
+                    {
+                        "role": role,
+                        "parts": [{"text": msg["content"]}],
+                    }
+                )
 
         body: dict[str, Any] = {
             "contents": contents,

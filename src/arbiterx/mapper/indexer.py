@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from arbiterx.mapper.hasher import FileHasher
-from arbiterx.mapper.languages import SUPPORTED_LANGUAGES, detect_language
+from arbiterx.mapper.languages import detect_language
 from arbiterx.mapper.parser import TreeSitterParser
 from arbiterx.mapper.store import MapStore
 
@@ -113,11 +113,7 @@ class Indexer:
         Returns:
             Dict with counts from the fresh index pass.
         """
-        self.store.conn.executescript(
-            "DELETE FROM edges; DELETE FROM symbols; DELETE FROM files;"
-        )
+        self.store.conn.executescript("DELETE FROM edges; DELETE FROM symbols; DELETE FROM files;")
         self.store.conn.commit()
 
-        raise NotImplementedError(
-            "full_reindex requires the root_path to be stored or passed."
-        )
+        raise NotImplementedError("full_reindex requires the root_path to be stored or passed.")

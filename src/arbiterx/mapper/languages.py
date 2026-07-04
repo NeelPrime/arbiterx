@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import tree_sitter_language_pack as tslp
 
@@ -40,7 +40,7 @@ for _lang, _exts in SUPPORTED_LANGUAGES.items():
         _EXT_TO_LANGUAGE[_ext] = _lang
 
 
-def detect_language(path: Path | str) -> Optional[str]:
+def detect_language(path: Path | str) -> str | None:
     """Detect the programming language of a file based on its extension.
 
     Args:
@@ -67,7 +67,6 @@ def get_grammar(language: str) -> Any:
     """
     if language not in SUPPORTED_LANGUAGES:
         raise ValueError(
-            f"Unsupported language: {language!r}. "
-            f"Supported: {sorted(SUPPORTED_LANGUAGES.keys())}"
+            f"Unsupported language: {language!r}. Supported: {sorted(SUPPORTED_LANGUAGES.keys())}"
         )
     return tslp.get_language(language)

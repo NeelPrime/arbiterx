@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import networkx as nx
 
@@ -66,21 +66,25 @@ class SymbolGraph:
             qn = sym.qualified_name
             self._symbol_map[qn] = sym
             self._graph.add_node(
-                qn, kind=sym.kind, file_path=sym.file_path,
-                line_start=sym.line_start, line_end=sym.line_end,
+                qn,
+                kind=sym.kind,
+                file_path=sym.file_path,
+                line_start=sym.line_start,
+                line_end=sym.line_end,
                 signature=sym.signature,
             )
 
         for edge in edges:
             if edge.source in self._symbol_map and edge.target in self._symbol_map:
                 self._graph.add_edge(
-                    edge.source, edge.target,
-                    kind=edge.kind, file_path=edge.file_path, line=edge.line,
+                    edge.source,
+                    edge.target,
+                    kind=edge.kind,
+                    file_path=edge.file_path,
+                    line=edge.line,
                 )
 
-    def compute_pagerank(
-        self, personalization: Optional[dict[str, float]] = None
-    ) -> dict[str, float]:
+    def compute_pagerank(self, personalization: dict[str, float] | None = None) -> dict[str, float]:
         """Compute PageRank scores for all symbols in the graph.
 
         Args:
@@ -94,9 +98,11 @@ class SymbolGraph:
 
         try:
             scores: dict[str, float] = nx.pagerank(
-                self._graph, alpha=0.85,
+                self._graph,
+                alpha=0.85,
                 personalization=personalization,
-                max_iter=100, tol=1.0e-6,
+                max_iter=100,
+                tol=1.0e-6,
             )
         except nx.PowerIterationFailedConvergence:
             n = len(self._graph)
@@ -107,7 +113,7 @@ class SymbolGraph:
     def get_ranked_symbols(
         self,
         token_budget: int,
-        chat_files: Optional[list[str]] = None,
+        chat_files: list[str] | None = None,
     ) -> list[RankedSymbol]:
         """Get top-ranked symbols that fit within a token budget.
 
@@ -118,7 +124,7 @@ class SymbolGraph:
         Returns:
             List of RankedSymbol sorted by descending score within budget.
         """
-        personalization: Optional[dict[str, float]] = None
+        personalization: dict[str, float] | None = None
         if chat_files:
             personalization = {
                 node: (1.0 if data.get("file_path") in chat_files else 0.0)
@@ -146,12 +152,19 @@ class SymbolGraph:
             if tokens_used + token_estimate > token_budget:
                 continue
 
-            result.append(RankedSymbol(
-                name=sym.name, qualified_name=qname, kind=sym.kind,
-                file_path=sym.file_path, line_start=sym.line_start,
-                line_end=sym.line_end, signature=sym.signature,
-                score=score, token_estimate=token_estimate,
-            ))
+            result.append(
+                RankedSymbol(
+                    name=sym.name,
+                    qualified_name=qname,
+                    kind=sym.kind,
+                    file_path=sym.file_path,
+                    line_start=sym.line_start,
+                    line_end=sym.line_end,
+                    signature=sym.signature,
+                    score=score,
+                    token_estimate=token_estimate,
+                )
+            )
             tokens_used += token_estimate
 
         return result

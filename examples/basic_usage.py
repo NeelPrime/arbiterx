@@ -16,8 +16,7 @@ from pathlib import Path
 # ─── Step 1: Build a codebase map ─────────────────────────────────────────────
 # The mapper module provides Indexer + MapStore to parse source files into a
 # SQLite-backed symbol database.
-
-from arbiterx.mapper import Indexer, MapStore, detect_language
+from arbiterx.mapper import Indexer, MapStore
 
 
 def demo_build_map() -> MapStore:
@@ -49,6 +48,7 @@ def demo_build_map() -> MapStore:
 # ─── Step 2: Query a symbol ───────────────────────────────────────────────────
 # Once the map is built, you can look up any symbol by name.
 
+
 def demo_query_symbol(store: MapStore) -> None:
     """Look up a symbol in the codebase map."""
     print("=" * 60)
@@ -76,7 +76,7 @@ def demo_query_symbol(store: MapStore) -> None:
 # The router module provides a TaskClassifier that categorizes natural-language
 # task descriptions into structured metadata (type, complexity, scope, etc.).
 
-from arbiterx.router import TaskClassifier
+from arbiterx.router import TaskClassifier  # noqa: E402
 
 
 def demo_classify_task() -> None:
@@ -97,7 +97,7 @@ def demo_classify_task() -> None:
 
     for task in tasks:
         result = classifier.classify(task)
-        print(f"  Task: \"{task}\"")
+        print(f'  Task: "{task}"')
         print(f"    Type:       {result.task_type.name}")
         print(f"    Complexity: {result.complexity.name}")
         print(f"    Scope:      {result.context_scope.name}")

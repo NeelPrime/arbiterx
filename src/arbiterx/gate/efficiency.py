@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -23,14 +22,10 @@ _STRING_CONCAT_ASSIGN = re.compile(r"""(\w+)\s*\+=\s*(?:['"]|f['"]|str\(|\w+\s*\
 _STRING_CONCAT_REASSIGN = re.compile(r"""(\w+)\s*=\s*\1\s*\+\s*""")
 
 # Nested list comprehension (overly complex)
-_NESTED_COMPREHENSION = re.compile(
-    r"""\[.*\bfor\b.*\bfor\b.*\bfor\b.*\]"""
-)
+_NESTED_COMPREHENSION = re.compile(r"""\[.*\bfor\b.*\bfor\b.*\bfor\b.*\]""")
 
 # Double nested comprehension (two levels)
-_DOUBLE_NESTED_COMP = re.compile(
-    r"""\[.*\bfor\b.*\bfor\b.*\]"""
-)
+_DOUBLE_NESTED_COMP = re.compile(r"""\[.*\bfor\b.*\bfor\b.*\]""")
 
 # Unnecessary list() wrapping a generator
 _UNNECESSARY_LIST = re.compile(
@@ -52,7 +47,7 @@ class EfficiencyChecker:
     - Unnecessary list() calls on generators/iterables
     """
 
-    def check(self, code: str) -> List[EfficiencyIssue]:
+    def check(self, code: str) -> list[EfficiencyIssue]:
         """Run all efficiency checks on the given code.
 
         Args:
@@ -61,7 +56,7 @@ class EfficiencyChecker:
         Returns:
             List of EfficiencyIssue instances found.
         """
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
         lines = code.splitlines()
 
         issues.extend(self._check_string_concat_in_loops(lines))
@@ -72,11 +67,9 @@ class EfficiencyChecker:
 
         return issues
 
-    def _check_string_concat_in_loops(
-        self, lines: list[str]
-    ) -> List[EfficiencyIssue]:
+    def _check_string_concat_in_loops(self, lines: list[str]) -> list[EfficiencyIssue]:
         """Detect string concatenation inside loops."""
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
         loop_stack: list[int] = []  # indent levels of active loops
 
         for line_num, line in enumerate(lines, start=1):
@@ -114,11 +107,9 @@ class EfficiencyChecker:
 
         return issues
 
-    def _check_nested_comprehensions(
-        self, lines: list[str]
-    ) -> List[EfficiencyIssue]:
+    def _check_nested_comprehensions(self, lines: list[str]) -> list[EfficiencyIssue]:
         """Detect overly nested list comprehensions."""
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             if _NESTED_COMPREHENSION.search(line):
@@ -144,11 +135,9 @@ class EfficiencyChecker:
 
         return issues
 
-    def _check_repeated_computation(
-        self, lines: list[str]
-    ) -> List[EfficiencyIssue]:
+    def _check_repeated_computation(self, lines: list[str]) -> list[EfficiencyIssue]:
         """Detect repeated expensive calls inside loops."""
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
         loop_stack: list[int] = []
         seen_calls_in_loop: dict[str, int] = {}
 
@@ -195,11 +184,9 @@ class EfficiencyChecker:
 
         return issues
 
-    def _check_quadratic_patterns(
-        self, lines: list[str]
-    ) -> List[EfficiencyIssue]:
+    def _check_quadratic_patterns(self, lines: list[str]) -> list[EfficiencyIssue]:
         """Detect O(n^2) patterns: nested for loops over the same collection."""
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
 
         # Track for-loop variables and their iterables
         for_pattern = re.compile(r"""^\s*for\s+(\w+)\s+in\s+(\w+)""")
@@ -221,7 +208,7 @@ class EfficiencyChecker:
                 _, iterable = match.groups()
 
                 # Check if this is a nested loop over same collection
-                for outer_indent, outer_iterable, outer_line in outer_loops:
+                for _outer_indent, outer_iterable, _outer_line in outer_loops:
                     if iterable == outer_iterable:
                         issues.append(
                             EfficiencyIssue(
@@ -237,9 +224,9 @@ class EfficiencyChecker:
 
         return issues
 
-    def _check_unnecessary_list(self, lines: list[str]) -> List[EfficiencyIssue]:
+    def _check_unnecessary_list(self, lines: list[str]) -> list[EfficiencyIssue]:
         """Detect unnecessary list() wrapping on iterables."""
-        issues: List[EfficiencyIssue] = []
+        issues: list[EfficiencyIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             # list() around dict methods, range, map, filter, etc. in a for loop

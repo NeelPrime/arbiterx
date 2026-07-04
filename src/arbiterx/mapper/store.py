@@ -5,7 +5,6 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 from arbiterx.mapper.parser import Edge, Symbol
 
@@ -66,7 +65,7 @@ class MapStore:
 
     def __init__(self, db_path: Path | str) -> None:
         self.db_path = Path(db_path)
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -90,11 +89,9 @@ class MapStore:
             self._conn.close()
             self._conn = None
 
-    def get_file_hash(self, path: str) -> Optional[str]:
+    def get_file_hash(self, path: str) -> str | None:
         """Get the stored hash for a file path."""
-        row = self.conn.execute(
-            "SELECT hash FROM files WHERE path = ?", (path,)
-        ).fetchone()
+        row = self.conn.execute("SELECT hash FROM files WHERE path = ?", (path,)).fetchone()
         return row["hash"] if row else None
 
     def upsert_file(self, path: str, hash: str, language: str) -> int:
@@ -120,8 +117,17 @@ class MapStore:
             (file_id, name, kind, line_start, line_end, signature, docstring, parent, qualified_name)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             [
-                (file_id, s.name, s.kind, s.line_start, s.line_end,
-                 s.signature, s.docstring, s.parent, s.qualified_name)
+                (
+                    file_id,
+                    s.name,
+                    s.kind,
+                    s.line_start,
+                    s.line_end,
+                    s.signature,
+                    s.docstring,
+                    s.parent,
+                    s.qualified_name,
+                )
                 for s in symbols
             ],
         )
@@ -152,9 +158,7 @@ class MapStore:
 
     def get_file_symbols(self, file_id: int) -> list[dict]:
         """Get all symbols for a file."""
-        rows = self.conn.execute(
-            "SELECT * FROM symbols WHERE file_id = ?", (file_id,)
-        ).fetchall()
+        rows = self.conn.execute("SELECT * FROM symbols WHERE file_id = ?", (file_id,)).fetchall()
         return [dict(row) for row in rows]
 
     def get_all_files(self) -> list[dict]:

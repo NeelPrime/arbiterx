@@ -9,8 +9,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Optional
 
+from arbiterx.router.classifier import ClassifiedTask
 
 # ─── Enums ────────────────────────────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ class _StepResult:
 
     passed: bool
     reason: str
-    action: Optional[LadderAction] = None
+    action: LadderAction | None = None
     tokens_saved: int = 0
 
 
@@ -83,7 +83,7 @@ class EngineeringViolation:
     arbiterx_name: str
     severity: Severity
     description: str
-    line_hint: Optional[int]
+    line_hint: int | None
     suggested_fix: str
 
 
@@ -139,15 +139,14 @@ class SelfInterrogator:
         self,
         cache_available: bool = True,
         avg_token_cost: float = 0.003,
-        arbiterx_config: Optional[ArbiterXConfig] = None,
+        arbiterx_config: ArbiterXConfig | None = None,
     ) -> None:
         self.cache_available = cache_available
         self.avg_token_cost = avg_token_cost
         self.config = arbiterx_config or ArbiterXConfig()
 
-    def interrogate(self, task: "ClassifiedTask", query: str) -> LadderResult:
+    def interrogate(self, task: ClassifiedTask, query: str) -> LadderResult:
         """Run the 16-step cascade on a classified task."""
-        from arbiterx.router.classifier import ClassifiedTask, Complexity, TaskType
 
         steps = [
             self._step_01_cached,
@@ -190,103 +189,168 @@ class SelfInterrogator:
 
     # ── Ladder Steps ──────────────────────────────────────────────────────────
 
-    def _step_01_cached(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_01_cached(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity
+
         if self.cache_available and task.complexity == Complexity.TRIVIAL:
-            return _StepResult(False, "Trivial task likely cached", LadderAction.USE_CACHE, task.estimated_tokens)
+            return _StepResult(
+                False, "Trivial task likely cached", LadderAction.USE_CACHE, task.estimated_tokens
+            )
         return _StepResult(True, "Not cached")
 
-    def _step_02_repeat(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_02_repeat(self, task: ClassifiedTask, query: str) -> _StepResult:
         return _StepResult(True, "Not a repeat")
 
-    def _step_03_template(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_03_template(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity
+
         keywords = ["boilerplate", "scaffold", "starter", "template"]
         if any(kw in query.lower() for kw in keywords):
             if task.complexity in (Complexity.TRIVIAL, Complexity.LOW):
-                return _StepResult(False, "Template-based response sufficient", LadderAction.USE_LOCAL, task.estimated_tokens - 50)
+                return _StepResult(
+                    False,
+                    "Template-based response sufficient",
+                    LadderAction.USE_LOCAL,
+                    task.estimated_tokens - 50,
+                )
         return _StepResult(True, "Not template-able")
 
-    def _step_04_single_token(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_04_single_token(self, task: ClassifiedTask, query: str) -> _StepResult:
         yn_patterns = ["is it", "does it", "can i", "should i", "will it"]
         q_lower = query.lower().strip()
         if any(q_lower.startswith(p) for p in yn_patterns) and len(query.split()) < 8:
-            return _StepResult(False, "Yes/no question — minimal model", LadderAction.USE_SMALL, task.estimated_tokens - 10)
+            return _StepResult(
+                False,
+                "Yes/no question — minimal model",
+                LadderAction.USE_SMALL,
+                task.estimated_tokens - 10,
+            )
         return _StepResult(True, "Not a yes/no question")
 
-    def _step_05_reformatting(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_05_reformatting(self, task: ClassifiedTask, query: str) -> _StepResult:
         keywords = ["format", "reformat", "prettify", "indent", "lint"]
         if any(kw in query.lower() for kw in keywords):
-            return _StepResult(False, "Reformatting — local tool", LadderAction.USE_LOCAL, task.estimated_tokens - 100)
+            return _StepResult(
+                False,
+                "Reformatting — local tool",
+                LadderAction.USE_LOCAL,
+                task.estimated_tokens - 100,
+            )
         return _StepResult(True, "Not reformatting")
 
-    def _step_06_rule_based(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_06_rule_based(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity
+
         keywords = ["rename", "find and replace", "search", "grep"]
         if any(kw in query.lower() for kw in keywords) and task.complexity == Complexity.TRIVIAL:
-            return _StepResult(False, "Rule-based operation", LadderAction.USE_LOCAL, task.estimated_tokens)
+            return _StepResult(
+                False, "Rule-based operation", LadderAction.USE_LOCAL, task.estimated_tokens
+            )
         return _StepResult(True, "Not rule-based")
 
-    def _step_07_self_contained(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_07_self_contained(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity
+
         if task.estimated_tokens < 200 and task.complexity == Complexity.LOW:
-            return _StepResult(False, "Self-contained, small model sufficient", LadderAction.USE_SMALL, task.estimated_tokens // 2)
+            return _StepResult(
+                False,
+                "Self-contained, small model sufficient",
+                LadderAction.USE_SMALL,
+                task.estimated_tokens // 2,
+            )
         return _StepResult(True, "Needs external context")
 
-    def _step_08_single_function(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_08_single_function(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity, TaskType
+
         if task.task_type in (TaskType.DEBUGGING, TaskType.CODE_GENERATION):
             if task.complexity.value <= Complexity.LOW.value:
-                return _StepResult(False, "Single-function scope", LadderAction.USE_SMALL, task.estimated_tokens // 3)
+                return _StepResult(
+                    False,
+                    "Single-function scope",
+                    LadderAction.USE_SMALL,
+                    task.estimated_tokens // 3,
+                )
         return _StepResult(True, "Broader than single function")
 
-    def _step_09_local_file(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_09_local_file(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import ContextScope
+
         if task.context_scope == ContextScope.FILE:
-            return _StepResult(False, "File-scoped — medium model", LadderAction.USE_MEDIUM, task.estimated_tokens // 4)
+            return _StepResult(
+                False,
+                "File-scoped — medium model",
+                LadderAction.USE_MEDIUM,
+                task.estimated_tokens // 4,
+            )
         return _StepResult(True, "Needs broader context")
 
-    def _step_10_cross_file(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_10_cross_file(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import ContextScope
+
         if task.context_scope == ContextScope.MODULE:
-            return _StepResult(False, "Module-scoped — medium model", LadderAction.USE_MEDIUM, task.estimated_tokens // 5)
+            return _StepResult(
+                False,
+                "Module-scoped — medium model",
+                LadderAction.USE_MEDIUM,
+                task.estimated_tokens // 5,
+            )
         return _StepResult(True, "Needs repo-wide context")
 
-    def _step_11_repo_wide(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_11_repo_wide(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity
+
         if task.complexity == Complexity.HIGH:
-            return _StepResult(False, "Repo-wide reasoning — large model", LadderAction.USE_LARGE, 0)
+            return _StepResult(
+                False, "Repo-wide reasoning — large model", LadderAction.USE_LARGE, 0
+            )
         return _StepResult(True, "Even broader scope needed")
 
-    def _step_12_ambiguous(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_12_ambiguous(self, task: ClassifiedTask, query: str) -> _StepResult:
         signals = ["maybe", "not sure", "could be", "possibly", "or"]
         if sum(1 for s in signals if s in query.lower()) >= 2:
-            return _StepResult(False, "Ambiguous — large model for clarification", LadderAction.USE_LARGE, 0)
+            return _StepResult(
+                False, "Ambiguous — large model for clarification", LadderAction.USE_LARGE, 0
+            )
         return _StepResult(True, "Requirements seem clear")
 
-    def _step_13_multi_step(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_13_multi_step(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity, TaskType
+
         if task.complexity.value >= Complexity.HIGH.value:
             if task.task_type in (TaskType.ARCHITECTURE, TaskType.REFACTORING):
-                return _StepResult(False, "Multi-step planning — large model", LadderAction.USE_LARGE, 0)
+                return _StepResult(
+                    False, "Multi-step planning — large model", LadderAction.USE_LARGE, 0
+                )
         return _StepResult(True, "Single-step or handled")
 
-    def _step_14_domain_expertise(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_14_domain_expertise(self, task: ClassifiedTask, query: str) -> _StepResult:
         keywords = ["legal", "medical", "financial", "compliance", "regulation"]
         if any(kw in query.lower() for kw in keywords):
             return _StepResult(False, "Domain expertise — expert model", LadderAction.USE_EXPERT, 0)
         return _StepResult(True, "Standard code domain")
 
-    def _step_15_architectural(self, task: "ClassifiedTask", query: str) -> _StepResult:
+    def _step_15_architectural(self, task: ClassifiedTask, query: str) -> _StepResult:
         from arbiterx.router.classifier import Complexity, TaskType
+
         if task.task_type == TaskType.ARCHITECTURE and task.complexity == Complexity.EXPERT:
-            return _StepResult(False, "Novel architecture — expert model", LadderAction.USE_EXPERT, 0)
+            return _StepResult(
+                False, "Novel architecture — expert model", LadderAction.USE_EXPERT, 0
+            )
         return _StepResult(True, "Not novel architecture")
 
-    def _step_16_beyond_capability(self, task: "ClassifiedTask", query: str) -> _StepResult:
-        reject_signals = ["predict the future", "guarantee", "prove mathematically", "real-time data", "access the internet"]
+    def _step_16_beyond_capability(self, task: ClassifiedTask, query: str) -> _StepResult:
+        reject_signals = [
+            "predict the future",
+            "guarantee",
+            "prove mathematically",
+            "real-time data",
+            "access the internet",
+        ]
         if any(s in query.lower() for s in reject_signals):
-            return _StepResult(False, "Task may exceed AI capability", LadderAction.REJECT, task.estimated_tokens)
+            return _StepResult(
+                False, "Task may exceed AI capability", LadderAction.REJECT, task.estimated_tokens
+            )
         return _StepResult(True, "Within capability")
 
     def _default_action(self, step: int) -> LadderAction:
@@ -302,10 +366,9 @@ class SelfInterrogator:
             return LadderAction.USE_LARGE
         return LadderAction.USE_EXPERT
 
-    def _step_confidence(self, step: int, task: "ClassifiedTask") -> float:
+    def _step_confidence(self, step: int, task: ClassifiedTask) -> float:
         step_conf = max(0.3, 1.0 - (step - 1) * 0.05)
         return min(1.0, step_conf * task.confidence * 1.2)
-
 
     # ─── Phase 2: Engineering Enforcement ─────────────────────────────────────
 
@@ -354,7 +417,9 @@ class SelfInterrogator:
             summary_parts.append(f"{error_count} error(s)")
         if warning_count:
             summary_parts.append(f"{warning_count} warning(s)")
-        summary = f"Engineering score: {score}/100. " + (", ".join(summary_parts) if summary_parts else "All arbiterxs passed.")
+        summary = f"Engineering score: {score}/100. " + (
+            ", ".join(summary_parts) if summary_parts else "All arbiterxs passed."
+        )
 
         return EngineeringReport(violations=violations, passed=passed, summary=summary, score=score)
 
@@ -413,32 +478,35 @@ class SelfInterrogator:
         abc_pattern = re.compile(r"class\s+\w+\s*\(.*(?:ABC|Abstract|Base).*\)")
         for i, line in enumerate(lines, 1):
             if abc_pattern.search(line):
-                violations.append(EngineeringViolation(
-                    arbiterx_name="YAGNI",
-                    severity=Severity.WARNING,
-                    description="Abstract base class detected — ensure it has multiple implementations",
-                    line_hint=i,
-                    suggested_fix="Remove abstraction unless multiple concrete classes exist now (not 'might exist later').",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="YAGNI",
+                        severity=Severity.WARNING,
+                        description="Abstract base class detected — ensure it has multiple implementations",
+                        line_hint=i,
+                        suggested_fix="Remove abstraction unless multiple concrete classes exist now (not 'might exist later').",
+                    )
+                )
 
         # Detect *args/**kwargs without clear purpose
         catchall_pattern = re.compile(r"def\s+\w+\s*\([^)]*\*\*kwargs[^)]*\)")
         for i, line in enumerate(lines, 1):
             if catchall_pattern.search(line) and "override" not in line.lower():
-                violations.append(EngineeringViolation(
-                    arbiterx_name="YAGNI",
-                    severity=Severity.INFO,
-                    description="**kwargs may indicate over-generalization",
-                    line_hint=i,
-                    suggested_fix="Use explicit parameters unless this is a decorator or wrapper.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="YAGNI",
+                        severity=Severity.INFO,
+                        description="**kwargs may indicate over-generalization",
+                        line_hint=i,
+                        suggested_fix="Use explicit parameters unless this is a decorator or wrapper.",
+                    )
+                )
 
         return violations
 
     def _check_error_handling(self, lines: list[str], language: str) -> list[EngineeringViolation]:
         """Ensure I/O, network, and file operations have try/except or context managers."""
         violations: list[EngineeringViolation] = []
-        code = "\n".join(lines)
 
         io_patterns = [
             (re.compile(r"open\s*\("), "file open"),
@@ -458,13 +526,15 @@ class SelfInterrogator:
                     has_try = "try:" in context or "try :" in context
                     has_with = re.search(r"\bwith\b", context) is not None
                     if not has_try and not has_with and "with " not in line:
-                        violations.append(EngineeringViolation(
-                            arbiterx_name="ERROR_HANDLING",
-                            severity=Severity.ERROR,
-                            description=f"Unprotected {op_name} — no try/except or context manager",
-                            line_hint=i,
-                            suggested_fix=f"Wrap {op_name} in try/except or use a `with` statement.",
-                        ))
+                        violations.append(
+                            EngineeringViolation(
+                                arbiterx_name="ERROR_HANDLING",
+                                severity=Severity.ERROR,
+                                description=f"Unprotected {op_name} — no try/except or context manager",
+                                line_hint=i,
+                                suggested_fix=f"Wrap {op_name} in try/except or use a `with` statement.",
+                            )
+                        )
 
         return violations
 
@@ -489,13 +559,15 @@ class SelfInterrogator:
 
             # Check return type
             if "->" not in line:
-                violations.append(EngineeringViolation(
-                    arbiterx_name="TYPE_SAFETY",
-                    severity=Severity.WARNING,
-                    description=f"Function '{func_name}' missing return type annotation",
-                    line_hint=i,
-                    suggested_fix=f"Add -> ReturnType to '{func_name}'.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="TYPE_SAFETY",
+                        severity=Severity.WARNING,
+                        description=f"Function '{func_name}' missing return type annotation",
+                        line_hint=i,
+                        suggested_fix=f"Add -> ReturnType to '{func_name}'.",
+                    )
+                )
 
             # Check parameter annotations
             if params.strip():
@@ -505,17 +577,21 @@ class SelfInterrogator:
                     if param_name in ("self", "cls", "*", "/"):
                         continue
                     if ":" not in param and param_name:
-                        violations.append(EngineeringViolation(
-                            arbiterx_name="TYPE_SAFETY",
-                            severity=Severity.WARNING,
-                            description=f"Parameter '{param_name}' in '{func_name}' has no type hint",
-                            line_hint=i,
-                            suggested_fix=f"Add type annotation: {param_name}: Type",
-                        ))
+                        violations.append(
+                            EngineeringViolation(
+                                arbiterx_name="TYPE_SAFETY",
+                                severity=Severity.WARNING,
+                                description=f"Parameter '{param_name}' in '{func_name}' has no type hint",
+                                line_hint=i,
+                                suggested_fix=f"Add type annotation: {param_name}: Type",
+                            )
+                        )
 
         return violations
 
-    def _check_resource_cleanup(self, lines: list[str], language: str) -> list[EngineeringViolation]:
+    def _check_resource_cleanup(
+        self, lines: list[str], language: str
+    ) -> list[EngineeringViolation]:
         """Detect resources opened without context managers."""
         violations: list[EngineeringViolation] = []
 
@@ -523,13 +599,15 @@ class SelfInterrogator:
         bare_open = re.compile(r"(\w+)\s*=\s*open\s*\(")
         for i, line in enumerate(lines, 1):
             if bare_open.search(line) and "with " not in line:
-                violations.append(EngineeringViolation(
-                    arbiterx_name="RESOURCE_CLEANUP",
-                    severity=Severity.ERROR,
-                    description="File opened without context manager — risk of resource leak",
-                    line_hint=i,
-                    suggested_fix="Use `with open(...) as f:` instead of bare assignment.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="RESOURCE_CLEANUP",
+                        severity=Severity.ERROR,
+                        description="File opened without context manager — risk of resource leak",
+                        line_hint=i,
+                        suggested_fix="Use `with open(...) as f:` instead of bare assignment.",
+                    )
+                )
 
         # Pattern: connection created without close in surrounding scope
         conn_patterns = re.compile(r"(\w+)\s*=\s*(?:create_connection|connect|socket\.socket)\s*\(")
@@ -537,15 +615,17 @@ class SelfInterrogator:
             match = conn_patterns.search(line)
             if match and "with " not in line:
                 var_name = match.group(1)
-                remaining = "\n".join(lines[i:min(i + 20, len(lines))])
+                remaining = "\n".join(lines[i : min(i + 20, len(lines))])
                 if f"{var_name}.close()" not in remaining and "finally" not in remaining:
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="RESOURCE_CLEANUP",
-                        severity=Severity.ERROR,
-                        description=f"Connection '{var_name}' may not be closed",
-                        line_hint=i,
-                        suggested_fix=f"Use context manager or ensure {var_name}.close() in a finally block.",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="RESOURCE_CLEANUP",
+                            severity=Severity.ERROR,
+                            description=f"Connection '{var_name}' may not be closed",
+                            line_hint=i,
+                            suggested_fix=f"Use context manager or ensure {var_name}.close() in a finally block.",
+                        )
+                    )
 
         return violations
 
@@ -576,34 +656,39 @@ class SelfInterrogator:
                 if value <= threshold or value in (100, 1000):  # common benign values
                     continue
                 # Skip if it's in a type hint or string
-                if ":" in line[:match.start()] and "->" not in line[:match.start()]:
+                if ":" in line[: match.start()] and "->" not in line[: match.start()]:
                     continue
-                violations.append(EngineeringViolation(
-                    arbiterx_name="NO_MAGIC_NUMBERS",
-                    severity=Severity.WARNING,
-                    description=f"Magic number {match.group(1)} — use a named constant",
-                    line_hint=i,
-                    suggested_fix=f"Extract to: MEANINGFUL_NAME = {match.group(1)}",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="NO_MAGIC_NUMBERS",
+                        severity=Severity.WARNING,
+                        description=f"Magic number {match.group(1)} — use a named constant",
+                        line_hint=i,
+                        suggested_fix=f"Extract to: MEANINGFUL_NAME = {match.group(1)}",
+                    )
+                )
 
         return violations
-
 
     def _check_dead_code(self, lines: list[str], language: str) -> list[EngineeringViolation]:
         """Detect commented-out code, unused imports, unreachable branches."""
         violations: list[EngineeringViolation] = []
 
         # Commented-out code (lines starting with # that look like code)
-        code_comment_pattern = re.compile(r"^\s*#\s*(def |class |import |from |return |if |for |while |print\()")
+        code_comment_pattern = re.compile(
+            r"^\s*#\s*(def |class |import |from |return |if |for |while |print\()"
+        )
         for i, line in enumerate(lines, 1):
             if code_comment_pattern.match(line):
-                violations.append(EngineeringViolation(
-                    arbiterx_name="NO_DEAD_CODE",
-                    severity=Severity.WARNING,
-                    description="Commented-out code detected — remove or restore",
-                    line_hint=i,
-                    suggested_fix="Delete commented code. Use version control to recover old code.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="NO_DEAD_CODE",
+                        severity=Severity.WARNING,
+                        description="Commented-out code detected — remove or restore",
+                        line_hint=i,
+                        suggested_fix="Delete commented code. Use version control to recover old code.",
+                    )
+                )
 
         # Unused imports heuristic: import X where X never appears again
         import_pattern = re.compile(r"^\s*(?:from\s+\S+\s+)?import\s+(.+)")
@@ -620,34 +705,42 @@ class SelfInterrogator:
                 # Count occurrences beyond the import line itself
                 occurrences = len(re.findall(r"\b" + re.escape(name) + r"\b", full_code))
                 if occurrences <= 1:
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="NO_DEAD_CODE",
-                        severity=Severity.WARNING,
-                        description=f"Import '{name}' appears unused",
-                        line_hint=i,
-                        suggested_fix=f"Remove unused import: {name}",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="NO_DEAD_CODE",
+                            severity=Severity.WARNING,
+                            description=f"Import '{name}' appears unused",
+                            line_hint=i,
+                            suggested_fix=f"Remove unused import: {name}",
+                        )
+                    )
 
         # Unreachable code after return/raise/break/continue
         terminal_pattern = re.compile(r"^\s+(return|raise|break|continue)\b")
         for i, line in enumerate(lines[:-1], 1):
             if terminal_pattern.match(line):
                 next_line = lines[i].strip() if i < len(lines) else ""
-                if next_line and not next_line.startswith(("#", "def ", "class ", "elif", "else", "except", "finally")):
+                if next_line and not next_line.startswith(
+                    ("#", "def ", "class ", "elif", "else", "except", "finally")
+                ):
                     indent_current = len(line) - len(line.lstrip())
                     indent_next = len(lines[i]) - len(lines[i].lstrip())
                     if indent_next >= indent_current:
-                        violations.append(EngineeringViolation(
-                            arbiterx_name="NO_DEAD_CODE",
-                            severity=Severity.ERROR,
-                            description="Unreachable code after terminal statement",
-                            line_hint=i + 1,
-                            suggested_fix="Remove unreachable code or fix control flow logic.",
-                        ))
+                        violations.append(
+                            EngineeringViolation(
+                                arbiterx_name="NO_DEAD_CODE",
+                                severity=Severity.ERROR,
+                                description="Unreachable code after terminal statement",
+                                line_hint=i + 1,
+                                suggested_fix="Remove unreachable code or fix control flow logic.",
+                            )
+                        )
 
         return violations
 
-    def _check_single_responsibility(self, lines: list[str], language: str) -> list[EngineeringViolation]:
+    def _check_single_responsibility(
+        self, lines: list[str], language: str
+    ) -> list[EngineeringViolation]:
         """Flag functions exceeding max_function_lines threshold."""
         violations: list[EngineeringViolation] = []
         max_lines = self.config.max_function_lines
@@ -661,7 +754,7 @@ class SelfInterrogator:
                 indent = len(match.group(1))
                 func_starts.append((i, match.group(2), indent))
 
-        for idx, (start_line, func_name, indent) in enumerate(func_starts):
+        for idx, (start_line, func_name, _indent) in enumerate(func_starts):
             # Find function end: next line at same or lesser indent (or next function)
             if idx + 1 < len(func_starts):
                 end_line = func_starts[idx + 1][0] - 1
@@ -672,17 +765,24 @@ class SelfInterrogator:
             body_lines = 0
             for line in lines[start_line:end_line]:  # skip the def line itself
                 stripped = line.strip()
-                if stripped and not stripped.startswith("#") and not stripped.startswith('"""') and not stripped.startswith("'''"):
+                if (
+                    stripped
+                    and not stripped.startswith("#")
+                    and not stripped.startswith('"""')
+                    and not stripped.startswith("'''")
+                ):
                     body_lines += 1
 
             if body_lines > max_lines:
-                violations.append(EngineeringViolation(
-                    arbiterx_name="SINGLE_RESPONSIBILITY",
-                    severity=Severity.WARNING,
-                    description=f"Function '{func_name}' is {body_lines} lines (max: {max_lines}) — likely doing too much",
-                    line_hint=start_line,
-                    suggested_fix=f"Extract sub-logic into helper functions. Target ≤{max_lines} lines per function.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="SINGLE_RESPONSIBILITY",
+                        severity=Severity.WARNING,
+                        description=f"Function '{func_name}' is {body_lines} lines (max: {max_lines}) — likely doing too much",
+                        line_hint=start_line,
+                        suggested_fix=f"Extract sub-logic into helper functions. Target ≤{max_lines} lines per function.",
+                    )
+                )
 
         return violations
 
@@ -691,7 +791,9 @@ class SelfInterrogator:
         violations: list[EngineeringViolation] = []
 
         func_pattern = re.compile(r"^(\s*)def\s+(\w+)\s*\(([^)]+)\)")
-        validation_pattern = re.compile(r"(isinstance|assert |if\s+\w+\s+is\s+None|if\s+not\s+\w+|raise\s+(?:ValueError|TypeError))")
+        validation_pattern = re.compile(
+            r"(isinstance|assert |if\s+\w+\s+is\s+None|if\s+not\s+\w+|raise\s+(?:ValueError|TypeError))"
+        )
 
         in_function = False
         func_name = ""
@@ -728,13 +830,15 @@ class SelfInterrogator:
             if func_body_lines > 10 and validation_pattern.search(line):
                 if not found_validation_late:
                     found_validation_late = True
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="FAIL_FAST",
-                        severity=Severity.INFO,
-                        description=f"Late validation in '{func_name}' — validate inputs at function entry",
-                        line_hint=i,
-                        suggested_fix="Move input validation (isinstance, None checks, asserts) to the top of the function.",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="FAIL_FAST",
+                            severity=Severity.INFO,
+                            description=f"Late validation in '{func_name}' — validate inputs at function entry",
+                            line_hint=i,
+                            suggested_fix="Move input validation (isinstance, None checks, asserts) to the top of the function.",
+                        )
+                    )
 
         return violations
 
@@ -745,33 +849,46 @@ class SelfInterrogator:
         # Patterns that suggest non-idempotent operations
         append_patterns = [
             (re.compile(r"\.\s*append\s*\(.*\bopen\b"), "Appending to file may duplicate on retry"),
-            (re.compile(r"INSERT\s+INTO", re.IGNORECASE), "INSERT without ON CONFLICT may duplicate rows"),
-            (re.compile(r"\bcounter\s*\+=|\bcounter\s*=\s*counter\s*\+"), "Counter increment is not idempotent"),
-            (re.compile(r"\.send\s*\(|send_mail|send_email"), "Sending messages — not safe to retry without dedup"),
+            (
+                re.compile(r"INSERT\s+INTO", re.IGNORECASE),
+                "INSERT without ON CONFLICT may duplicate rows",
+            ),
+            (
+                re.compile(r"\bcounter\s*\+=|\bcounter\s*=\s*counter\s*\+"),
+                "Counter increment is not idempotent",
+            ),
+            (
+                re.compile(r"\.send\s*\(|send_mail|send_email"),
+                "Sending messages — not safe to retry without dedup",
+            ),
         ]
 
         for i, line in enumerate(lines, 1):
             for pattern, desc in append_patterns:
                 if pattern.search(line):
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="IDEMPOTENCY",
-                        severity=Severity.INFO,
-                        description=desc,
-                        line_hint=i,
-                        suggested_fix="Add idempotency key, use upsert, or check-before-write pattern.",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="IDEMPOTENCY",
+                            severity=Severity.INFO,
+                            description=desc,
+                            line_hint=i,
+                            suggested_fix="Add idempotency key, use upsert, or check-before-write pattern.",
+                        )
+                    )
 
         # File writes with mode 'a' (append) without truncation check
         append_write = re.compile(r"open\s*\([^)]*['\"]a['\"]")
         for i, line in enumerate(lines, 1):
             if append_write.search(line):
-                violations.append(EngineeringViolation(
-                    arbiterx_name="IDEMPOTENCY",
-                    severity=Severity.WARNING,
-                    description="File opened in append mode — retries will duplicate content",
-                    line_hint=i,
-                    suggested_fix="Consider write mode with full content, or add deduplication logic.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="IDEMPOTENCY",
+                        severity=Severity.WARNING,
+                        description="File opened in append mode — retries will duplicate content",
+                        line_hint=i,
+                        suggested_fix="Consider write mode with full content, or add deduplication logic.",
+                    )
+                )
 
         return violations
 
@@ -790,13 +907,15 @@ class SelfInterrogator:
                 while loop_stack and loop_stack[-1] >= indent:
                     loop_stack.pop()
                 if loop_stack:
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="PERFORMANCE",
-                        severity=Severity.WARNING,
-                        description="Nested loop detected — potential O(n²) complexity",
-                        line_hint=i,
-                        suggested_fix="Consider using a set/dict for O(1) lookups, or restructure to single pass.",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="PERFORMANCE",
+                            severity=Severity.WARNING,
+                            description="Nested loop detected — potential O(n²) complexity",
+                            line_hint=i,
+                            suggested_fix="Consider using a set/dict for O(1) lookups, or restructure to single pass.",
+                        )
+                    )
                 loop_stack.append(indent)
             else:
                 # Pop loops we've exited based on indent
@@ -824,13 +943,15 @@ class SelfInterrogator:
             if in_loop:
                 match = in_list_pattern.search(line)
                 if match and match.group(1) in list_vars:
-                    violations.append(EngineeringViolation(
-                        arbiterx_name="PERFORMANCE",
-                        severity=Severity.WARNING,
-                        description=f"Membership test on list '{match.group(1)}' inside loop — O(n²) total",
-                        line_hint=i,
-                        suggested_fix=f"Convert '{match.group(1)}' to a set for O(1) membership checks.",
-                    ))
+                    violations.append(
+                        EngineeringViolation(
+                            arbiterx_name="PERFORMANCE",
+                            severity=Severity.WARNING,
+                            description=f"Membership test on list '{match.group(1)}' inside loop — O(n²) total",
+                            line_hint=i,
+                            suggested_fix=f"Convert '{match.group(1)}' to a set for O(1) membership checks.",
+                        )
+                    )
 
         # String concatenation in loops
         concat_pattern = re.compile(r"(\w+)\s*\+=\s*['\"]|(\w+)\s*=\s*\2\s*\+\s*['\"]")
@@ -841,12 +962,14 @@ class SelfInterrogator:
             elif line.strip() and len(line) - len(line.lstrip()) == 0:
                 in_loop = False
             if in_loop and concat_pattern.search(line):
-                violations.append(EngineeringViolation(
-                    arbiterx_name="PERFORMANCE",
-                    severity=Severity.WARNING,
-                    description="String concatenation in loop — O(n²) memory reallocation",
-                    line_hint=i,
-                    suggested_fix="Collect parts in a list and use ''.join() after the loop.",
-                ))
+                violations.append(
+                    EngineeringViolation(
+                        arbiterx_name="PERFORMANCE",
+                        severity=Severity.WARNING,
+                        description="String concatenation in loop — O(n²) memory reallocation",
+                        line_hint=i,
+                        suggested_fix="Collect parts in a list and use ''.join() after the loop.",
+                    )
+                )
 
         return violations

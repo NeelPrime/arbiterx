@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
@@ -29,9 +30,7 @@ class OllamaAdapter(ModelAdapter):
         if not self.base_url:
             self.base_url = self.DEFAULT_BASE_URL
 
-    def _build_request(
-        self, messages: list[dict[str, str]], **kwargs: Any
-    ) -> dict[str, Any]:
+    def _build_request(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         """Build the Ollama API request body (OpenAI-compatible format)."""
         body: dict[str, Any] = {
             "model": self.model_name,
@@ -63,25 +62,27 @@ class OllamaAdapter(ModelAdapter):
         body = self._build_request(messages, **kwargs)
         body["stream"] = True
 
-        async with httpx.AsyncClient(timeout=300.0) as client:
-            async with client.stream(
+        async with (
+            httpx.AsyncClient(timeout=300.0) as client,
+            client.stream(
                 "POST",
                 f"{self.base_url}/api/chat",
                 json=body,
-            ) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if not line.strip():
-                        continue
-                    try:
-                        event = json.loads(line)
-                        content = event.get("message", {}).get("content", "")
-                        if content:
-                            yield content
-                        if event.get("done", False):
-                            break
-                    except json.JSONDecodeError:
-                        continue
+            ) as response,
+        ):
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if not line.strip():
+                    continue
+                try:
+                    event = json.loads(line)
+                    content = event.get("message", {}).get("content", "")
+                    if content:
+                        yield content
+                    if event.get("done", False):
+                        break
+                except json.JSONDecodeError:
+                    continue
 
     def format_messages(self, state: ConversationState) -> list[dict[str, str]]:
         """Format state for Ollama's API.

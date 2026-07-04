@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -47,9 +46,7 @@ _BARE_EXCEPT = re.compile(r"""^\s*except\s*:""")
 _BROAD_EXCEPT = re.compile(r"""^\s*except\s+(?:Exception|BaseException)\s*:""")
 
 # Async patterns that need cancellation handling
-_ASYNC_OPS = re.compile(
-    r"""(?:asyncio\.(?:gather|wait|create_task|ensure_future))\s*\("""
-)
+_ASYNC_OPS = re.compile(r"""(?:asyncio\.(?:gather|wait|create_task|ensure_future))\s*\(""")
 
 
 class RobustnessChecker:
@@ -63,7 +60,7 @@ class RobustnessChecker:
     - Async operations without cancellation handling
     """
 
-    def check(self, code: str) -> List[RobustnessIssue]:
+    def check(self, code: str) -> list[RobustnessIssue]:
         """Run all robustness checks on the given code.
 
         Args:
@@ -72,7 +69,7 @@ class RobustnessChecker:
         Returns:
             List of RobustnessIssue instances found.
         """
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
         lines = code.splitlines()
 
         issues.extend(self._check_file_operations(lines))
@@ -83,9 +80,9 @@ class RobustnessChecker:
 
         return issues
 
-    def _check_file_operations(self, lines: list[str]) -> List[RobustnessIssue]:
+    def _check_file_operations(self, lines: list[str]) -> list[RobustnessIssue]:
         """Check that file operations use context managers or try/except."""
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             if not _FILE_OPS.search(line):
@@ -121,18 +118,16 @@ class RobustnessChecker:
 
         return issues
 
-    def _check_network_calls(self, lines: list[str]) -> List[RobustnessIssue]:
+    def _check_network_calls(self, lines: list[str]) -> list[RobustnessIssue]:
         """Check that network calls have timeout parameters."""
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             if not _NETWORK_CALLS.search(line):
                 continue
 
             # Check if timeout is specified on this line or next few (multi-line calls)
-            check_window = "\n".join(
-                lines[line_num - 1 : min(line_num + 4, len(lines))]
-            )
+            check_window = "\n".join(lines[line_num - 1 : min(line_num + 4, len(lines))])
             if not _HAS_TIMEOUT.search(check_window):
                 issues.append(
                     RobustnessIssue(
@@ -145,9 +140,9 @@ class RobustnessChecker:
 
         return issues
 
-    def _check_database_ops(self, lines: list[str]) -> List[RobustnessIssue]:
+    def _check_database_ops(self, lines: list[str]) -> list[RobustnessIssue]:
         """Check that database operations have transaction handling."""
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             if not _DB_OPS.search(line):
@@ -184,9 +179,9 @@ class RobustnessChecker:
 
         return issues
 
-    def _check_bare_excepts(self, lines: list[str]) -> List[RobustnessIssue]:
+    def _check_bare_excepts(self, lines: list[str]) -> list[RobustnessIssue]:
         """Check for bare except clauses or overly broad exception handling."""
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
 
         for line_num, line in enumerate(lines, start=1):
             if _BARE_EXCEPT.match(line):
@@ -210,11 +205,9 @@ class RobustnessChecker:
 
         return issues
 
-    def _check_async_cancellation(
-        self, lines: list[str], full_code: str
-    ) -> List[RobustnessIssue]:
+    def _check_async_cancellation(self, lines: list[str], full_code: str) -> list[RobustnessIssue]:
         """Check that async operations have proper cancellation handling."""
-        issues: List[RobustnessIssue] = []
+        issues: list[RobustnessIssue] = []
 
         if "async " not in full_code:
             return issues
@@ -225,9 +218,7 @@ class RobustnessChecker:
 
             # asyncio.gather should have return_exceptions
             if "asyncio.gather" in line:
-                check_window = "\n".join(
-                    lines[line_num - 1 : min(line_num + 3, len(lines))]
-                )
+                check_window = "\n".join(lines[line_num - 1 : min(line_num + 3, len(lines))])
                 if "return_exceptions" not in check_window:
                     issues.append(
                         RobustnessIssue(

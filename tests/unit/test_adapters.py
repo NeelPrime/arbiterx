@@ -76,7 +76,9 @@ class TestGetAdapterFactory:
 
     def test_get_adapter_openrouter(self) -> None:
         """get_adapter('openrouter', ...) should return an OpenRouterAdapter."""
-        adapter = get_adapter("openrouter", "anthropic/claude-sonnet-4-20250514", api_key="test-key")
+        adapter = get_adapter(
+            "openrouter", "anthropic/claude-sonnet-4-20250514", api_key="test-key"
+        )
         assert isinstance(adapter, OpenRouterAdapter)
 
     def test_get_adapter_unknown_raises(self) -> None:
@@ -187,7 +189,11 @@ class TestCountTokens:
         self, adapter_cls: type[ModelAdapter], model_name: str
     ) -> None:
         """count_tokens should return a positive integer for non-empty text."""
-        adapter = adapter_cls(model_name, api_key="test-key") if adapter_cls != OllamaAdapter else adapter_cls(model_name)
+        adapter = (
+            adapter_cls(model_name, api_key="test-key")
+            if adapter_cls != OllamaAdapter
+            else adapter_cls(model_name)
+        )
         result = adapter.count_tokens("Hello, this is a test string with some words.")
         assert isinstance(result, int)
         assert result > 0
@@ -206,7 +212,11 @@ class TestCountTokens:
         self, adapter_cls: type[ModelAdapter], model_name: str
     ) -> None:
         """Token count for a ~100-char string should be roughly 20-50 tokens."""
-        adapter = adapter_cls(model_name, api_key="test-key") if adapter_cls != OllamaAdapter else adapter_cls(model_name)
+        adapter = (
+            adapter_cls(model_name, api_key="test-key")
+            if adapter_cls != OllamaAdapter
+            else adapter_cls(model_name)
+        )
         text = "The quick brown fox jumps over the lazy dog. " * 3  # ~135 chars
         result = adapter.count_tokens(text)
         # Rough heuristic: should be between 10 and 100 for ~135 chars

@@ -125,7 +125,7 @@ class TestMapStoreSymbols:
             line_end=kwargs.get("line_end", 10),
             signature=kwargs.get("signature", f"def {name}():"),
             docstring=kwargs.get("docstring", ""),
-            parent=kwargs.get("parent", None),
+            parent=kwargs.get("parent"),
         )
 
     def test_upsert_symbols_stores_correctly(self, store: MapStore) -> None:
@@ -190,8 +190,12 @@ class TestMapStoreEdges:
     def test_upsert_edges_stores_edges(self, store: MapStore) -> None:
         """upsert_edges should store edges retrievable via get_all_edges."""
         edges = [
-            Edge(source="src/main.py", target="greet", kind="calls", file_path="src/main.py", line=10),
-            Edge(source="src/main.py", target="os", kind="imports", file_path="src/main.py", line=1),
+            Edge(
+                source="src/main.py", target="greet", kind="calls", file_path="src/main.py", line=10
+            ),
+            Edge(
+                source="src/main.py", target="os", kind="imports", file_path="src/main.py", line=1
+            ),
         ]
         store.upsert_edges(edges)
 

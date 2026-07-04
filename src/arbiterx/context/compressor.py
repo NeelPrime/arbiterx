@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -49,7 +48,7 @@ class PromptCompressor:
         self.chars_per_token = chars_per_token
         self.preserve_structure = preserve_structure
 
-    def compress(self, text: str, budget: Optional[int] = None) -> CompressionResult:
+    def compress(self, text: str, budget: int | None = None) -> CompressionResult:
         """Apply full compression pipeline to text."""
         budget = budget or self.target_tokens
         original_tokens = self._estimate_tokens(text)

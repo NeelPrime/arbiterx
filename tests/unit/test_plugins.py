@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from arbiterx.adapters import ADAPTER_REGISTRY, ModelAdapter
 from arbiterx.plugins import PluginLoader, register_adapter, register_routing_rule
 

@@ -8,7 +8,6 @@ import sqlite3
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -40,7 +39,7 @@ class ResponseCache:
 
     def __init__(
         self,
-        db_path: Optional[str] = None,
+        db_path: str | None = None,
         default_ttl: float = 3600.0,
         max_entries: int = 10000,
     ) -> None:
@@ -52,7 +51,7 @@ class ResponseCache:
         self.db_path = db_path
         self.default_ttl = default_ttl
         self.max_entries = max_entries
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
         self._init_db()
 
     def _init_db(self) -> None:
@@ -85,7 +84,7 @@ class ResponseCache:
         )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
-    def get(self, prompt: str, model: str, temperature: float) -> Optional[CacheEntry]:
+    def get(self, prompt: str, model: str, temperature: float) -> CacheEntry | None:
         """Look up a cached response."""
         key = self._make_key(prompt, model, temperature)
         assert self._conn is not None
@@ -100,8 +99,13 @@ class ResponseCache:
             return None
 
         entry = CacheEntry(
-            key=row[0], response=row[1], model=row[2],
-            temperature=row[3], created_at=row[4], ttl=row[5], hit_count=row[6],
+            key=row[0],
+            response=row[1],
+            model=row[2],
+            temperature=row[3],
+            created_at=row[4],
+            ttl=row[5],
+            hit_count=row[6],
         )
 
         if entry.is_expired:
@@ -123,7 +127,7 @@ class ResponseCache:
         model: str,
         temperature: float,
         response: str,
-        ttl: Optional[float] = None,
+        ttl: float | None = None,
     ) -> str:
         """Store a response in the cache. Returns the cache key."""
         key = self._make_key(prompt, model, temperature)

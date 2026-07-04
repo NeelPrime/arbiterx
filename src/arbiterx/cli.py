@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -29,7 +28,7 @@ def version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: Optional[bool] = typer.Option(
+    version: bool | None = typer.Option(
         None,
         "--version",
         "-v",
@@ -56,9 +55,7 @@ def init(
         raise typer.Exit(code=1)
 
     arbiterx_dir.mkdir(parents=True, exist_ok=True)
-    (arbiterx_dir / "config.toml").write_text(
-        "# ArbiterX configuration\n[mapper]\nexclude = []\n"
-    )
+    (arbiterx_dir / "config.toml").write_text("# ArbiterX configuration\n[mapper]\nexclude = []\n")
     console.print(
         Panel(f"[green]✓ Initialized .arbiterx/ in {path.resolve()}[/green]", title="ArbiterX")
     )
@@ -66,7 +63,9 @@ def init(
 
 @app.command(name="map")
 def build_map(
-    status: bool = typer.Option(False, "--status", "-s", help="Show current map status instead of rebuilding."),
+    status: bool = typer.Option(
+        False, "--status", "-s", help="Show current map status instead of rebuilding."
+    ),
     root: Path = typer.Argument(Path("."), help="Root path of the repository."),
 ) -> None:
     """Build or update the codebase map.
@@ -163,10 +162,12 @@ def chat(
     Opens a REPL that accepts questions about your codebase and routes
     context intelligently based on the codebase map.
     """
-    console.print(Panel(
-        f"[bold green]ArbiterX Chat[/bold green] (model={model})\nType 'exit' or Ctrl+C to quit.",
-        title="Chat",
-    ))
+    console.print(
+        Panel(
+            f"[bold green]ArbiterX Chat[/bold green] (model={model})\nType 'exit' or Ctrl+C to quit.",
+            title="Chat",
+        )
+    )
     raise NotImplementedError("Chat not yet implemented.")
 
 
@@ -247,14 +248,16 @@ def query(
 @app.command(name="export-rules")
 def export_rules(
     format: str = typer.Option(
-        "agents", "--format", "-f",
+        "agents",
+        "--format",
+        "-f",
         help="Target format: agents, claude, cursor, copilot, aider, kiro, windsurf, zed",
     ),
     stdout: bool = typer.Option(False, "--stdout", help="Print to stdout instead of writing file"),
     root: Path = typer.Argument(Path("."), help="Project root"),
 ) -> None:
     """Export engineering principles as rules files for AI coding tools."""
-    from arbiterx.principles import CORE_PRINCIPLES, ENGINEERING_PREAMBLE
+    from arbiterx.principles import ENGINEERING_PREAMBLE
 
     # Build compact content: preamble tenets + NEVER list + self-check
     lines: list[str] = ["# ArbiterX Engineering Rules", ""]
@@ -304,7 +307,7 @@ def export_rules(
 
     # Cursor needs YAML frontmatter
     if format == "cursor":
-        frontmatter = "---\ndescription: ArbiterX engineering principles\nglobs: \"**/*\"\nalwaysApply: true\n---\n\n"
+        frontmatter = '---\ndescription: ArbiterX engineering principles\nglobs: "**/*"\nalwaysApply: true\n---\n\n'
         content = frontmatter + content
 
     if stdout:
@@ -314,9 +317,7 @@ def export_rules(
     out_path = root / format_map[format]
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(content)
-    console.print(
-        Panel(f"[green]✓ Exported rules to {out_path}[/green]", title="ArbiterX Export")
-    )
+    console.print(Panel(f"[green]✓ Exported rules to {out_path}[/green]", title="ArbiterX Export"))
 
 
 if __name__ == "__main__":

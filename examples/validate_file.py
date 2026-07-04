@@ -45,6 +45,7 @@ def get_language(file_path: Path) -> str:
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+
 def main() -> int:
     if len(sys.argv) < 2:
         print("Usage: python examples/validate_file.py <file_path>")

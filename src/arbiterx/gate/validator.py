@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
 
 import tree_sitter_language_pack as tslp
 
@@ -51,14 +50,12 @@ class GateResult:
 
     passed: bool
     score: int  # 0-100
-    issues: List[GateIssue] = field(default_factory=list)
-    fixed_code: Optional[str] = None
+    issues: list[GateIssue] = field(default_factory=list)
+    fixed_code: str | None = None
 
 
 # Style check patterns
-_SINGLE_LETTER_VAR = re.compile(
-    r"""^\s*([a-z])\s*=\s*(?!.*\bfor\b)"""
-)
+_SINGLE_LETTER_VAR = re.compile(r"""^\s*([a-z])\s*=\s*(?!.*\bfor\b)""")
 _ALLOWED_SINGLE_LETTERS = {"i", "j", "k", "x", "y", "n", "_"}
 
 # Loop variable pattern (these are fine as single letters)
@@ -66,9 +63,15 @@ _LOOP_VAR = re.compile(r"""^\s*for\s+([a-z])\s+in\s+""")
 
 # Completeness patterns
 _INCOMPLETE_PATTERNS: list[tuple[re.Pattern, str]] = [
-    (re.compile(r"""\b(?:TODO|FIXME|HACK|XXX)\b""", re.IGNORECASE), "TODO/FIXME/HACK comment left in code"),
+    (
+        re.compile(r"""\b(?:TODO|FIXME|HACK|XXX)\b""", re.IGNORECASE),
+        "TODO/FIXME/HACK comment left in code",
+    ),
     (re.compile(r"""(?:pass\s*#|\.\.\.)\s*$"""), "Placeholder implementation (pass or ...)"),
-    (re.compile(r"""raise\s+NotImplementedError"""), "NotImplementedError — unfinished implementation"),
+    (
+        re.compile(r"""raise\s+NotImplementedError"""),
+        "NotImplementedError — unfinished implementation",
+    ),
 ]
 
 # Naming convention patterns
@@ -118,7 +121,7 @@ class QualityGate:
         Returns:
             GateResult with pass/fail, score, issues, and optionally fixed code.
         """
-        issues: List[GateIssue] = []
+        issues: list[GateIssue] = []
 
         # 1. Syntax check
         issues.extend(self._check_syntax(code, language))
@@ -184,12 +187,12 @@ class QualityGate:
             fixed_code=fixed_code,
         )
 
-    def _check_syntax(self, code: str, language: str) -> List[GateIssue]:
+    def _check_syntax(self, code: str, language: str) -> list[GateIssue]:
         """Parse code with tree-sitter to verify valid syntax."""
-        issues: List[GateIssue] = []
+        issues: list[GateIssue] = []
 
         try:
-            lang = tslp.get_language(language)
+            tslp.get_language(language)
             parser = tslp.get_parser(language)
         except (LookupError, Exception):
             # Language not supported by tree-sitter — skip syntax check
@@ -222,9 +225,9 @@ class QualityGate:
             errors.extend(self._find_error_nodes(child))
         return errors
 
-    def _check_style(self, code: str) -> List[GateIssue]:
+    def _check_style(self, code: str) -> list[GateIssue]:
         """Check for style issues: naming conventions, single-letter variables."""
-        issues: List[GateIssue] = []
+        issues: list[GateIssue] = []
         lines = code.splitlines()
 
         # Collect loop variables (these are acceptable as single letters)
@@ -265,9 +268,9 @@ class QualityGate:
 
         return issues
 
-    def _check_completeness(self, code: str) -> List[GateIssue]:
+    def _check_completeness(self, code: str) -> list[GateIssue]:
         """Check for incomplete/placeholder code markers."""
-        issues: List[GateIssue] = []
+        issues: list[GateIssue] = []
         lines = code.splitlines()
 
         for line_num, line in enumerate(lines, start=1):
@@ -286,7 +289,7 @@ class QualityGate:
 
         return issues
 
-    def _calculate_score(self, issues: List[GateIssue]) -> int:
+    def _calculate_score(self, issues: list[GateIssue]) -> int:
         """Calculate a quality score (0-100) based on issues found."""
         if not issues:
             return 100
@@ -309,7 +312,7 @@ class QualityGate:
 
         return max(0, 100 - total_deduction)
 
-    def _attempt_auto_fix(self, code: str, issues: List[GateIssue]) -> str:
+    def _attempt_auto_fix(self, code: str, issues: list[GateIssue]) -> str:
         """Attempt to auto-fix simple issues in the code.
 
         Currently handles:

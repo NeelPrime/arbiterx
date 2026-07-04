@@ -24,7 +24,6 @@ from arbiterx.mapper.indexer import Indexer
 from arbiterx.mapper.languages import detect_language
 from arbiterx.mapper.store import MapStore
 
-
 # --- Benchmark queries ---
 
 SAMPLE_QUERIES = [
@@ -49,9 +48,33 @@ def estimate_tokens(text: str) -> int:
 def extract_keywords(query: str) -> list[str]:
     """Extract meaningful keywords from a query string."""
     stop_words = {
-        "how", "does", "the", "what", "is", "a", "an", "in", "to", "for",
-        "of", "and", "or", "with", "this", "that", "it", "be", "do", "fix",
-        "add", "new", "write", "explain", "refactor", "work", "works",
+        "how",
+        "does",
+        "the",
+        "what",
+        "is",
+        "a",
+        "an",
+        "in",
+        "to",
+        "for",
+        "of",
+        "and",
+        "or",
+        "with",
+        "this",
+        "that",
+        "it",
+        "be",
+        "do",
+        "fix",
+        "add",
+        "new",
+        "write",
+        "explain",
+        "refactor",
+        "work",
+        "works",
     }
     words = re.findall(r"\b[a-zA-Z_][a-zA-Z_0-9]*\b", query.lower())
     return [w for w in words if w not in stop_words and len(w) > 2]
@@ -144,10 +167,10 @@ def arbiterx_query(store: MapStore, query: str) -> tuple[int, int]:
 
 def run_benchmark(repo_path: Path, output_path: Path | None = None) -> None:
     """Run the full benchmark suite."""
-    print(f"\n{'='*70}")
-    print(f"  CARTOGRAPH BENCHMARK — Token Reduction Analysis")
+    print(f"\n{'=' * 70}")
+    print("  CARTOGRAPH BENCHMARK — Token Reduction Analysis")
     print(f"  Repository: {repo_path.resolve()}")
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
     # Step 1: Build the map
     print("Building codebase map...")
@@ -161,8 +184,10 @@ def run_benchmark(repo_path: Path, output_path: Path | None = None) -> None:
     result = indexer.index_repo(repo_path.resolve())
     build_time = time.time() - start
 
-    print(f"  Map built: {result['files']} files, {result['symbols']} symbols, "
-          f"{result['edges']} edges in {build_time:.2f}s\n")
+    print(
+        f"  Map built: {result['files']} files, {result['symbols']} symbols, "
+        f"{result['edges']} edges in {build_time:.2f}s\n"
+    )
 
     # Step 2: Run queries
     results = []
@@ -170,7 +195,7 @@ def run_benchmark(repo_path: Path, output_path: Path | None = None) -> None:
     total_arbiterx = 0
 
     print(f"{'Query':<45} {'Naive':>8} {'Carto':>8} {'Reduction':>10} {'Files':>6}")
-    print(f"{'-'*45} {'-'*8} {'-'*8} {'-'*10} {'-'*6}")
+    print(f"{'-' * 45} {'-' * 8} {'-' * 8} {'-' * 10} {'-' * 6}")
 
     for query in SAMPLE_QUERIES:
         # Naive baseline
@@ -190,40 +215,48 @@ def run_benchmark(repo_path: Path, output_path: Path | None = None) -> None:
         total_naive += naive_tokens
         total_arbiterx += carto_tokens
 
-        results.append({
-            "query": query,
-            "naive_tokens": naive_tokens,
-            "arbiterx_tokens": carto_tokens,
-            "reduction_pct": reduction,
-            "files_read": files_read,
-            "symbols_found": symbols_found,
-            "query_time_ms": query_time_ms,
-        })
+        results.append(
+            {
+                "query": query,
+                "naive_tokens": naive_tokens,
+                "arbiterx_tokens": carto_tokens,
+                "reduction_pct": reduction,
+                "files_read": files_read,
+                "symbols_found": symbols_found,
+                "query_time_ms": query_time_ms,
+            }
+        )
 
         # Print row
         query_short = query[:43] + ".." if len(query) > 45 else query
-        print(f"{query_short:<45} {naive_tokens:>8} {carto_tokens:>8} "
-              f"{reduction:>8.1f}% {files_read:>6}")
+        print(
+            f"{query_short:<45} {naive_tokens:>8} {carto_tokens:>8} "
+            f"{reduction:>8.1f}% {files_read:>6}"
+        )
 
     # Summary
     overall_reduction = (1 - total_arbiterx / total_naive) * 100 if total_naive > 0 else 0
     avg_query_time = sum(r["query_time_ms"] for r in results) / len(results)
 
-    print(f"\n{'='*70}")
-    print(f"  SUMMARY")
-    print(f"{'='*70}")
+    print(f"\n{'=' * 70}")
+    print("  SUMMARY")
+    print(f"{'=' * 70}")
     print(f"  Total naive tokens:       {total_naive:>10,}")
     print(f"  Total arbiterx tokens:  {total_arbiterx:>10,}")
     print(f"  Overall token reduction:  {overall_reduction:>10.1f}%")
     print(f"  Map build time:           {build_time:>10.2f}s")
     print(f"  Avg query time:           {avg_query_time:>10.1f}ms")
-    print(f"  {'✓ PASS' if overall_reduction >= 90 else '✗ FAIL'}: "
-          f"{'≥90% reduction achieved!' if overall_reduction >= 90 else 'Below 90% target'}")
-    print(f"{'='*70}\n")
+    print(
+        f"  {'✓ PASS' if overall_reduction >= 90 else '✗ FAIL'}: "
+        f"{'≥90% reduction achieved!' if overall_reduction >= 90 else 'Below 90% target'}"
+    )
+    print(f"{'=' * 70}\n")
 
     # Write results if output path provided
     if output_path:
-        _write_results(output_path, repo_path, results, overall_reduction, build_time, avg_query_time)
+        _write_results(
+            output_path, repo_path, results, overall_reduction, build_time, avg_query_time
+        )
         print(f"Results saved to: {output_path}")
 
     store.close()
@@ -263,7 +296,7 @@ def _write_results(
             f"{r['arbiterx_tokens']:,} | {r['reduction_pct']:.1f}% | {r['files_read']} |"
         )
 
-    lines.extend(["", f"---", f"", f"Generated by `arbiterx` benchmark suite."])
+    lines.extend(["", "---", "", "Generated by `arbiterx` benchmark suite."])
     output_path.write_text("\n".join(lines))
 
 

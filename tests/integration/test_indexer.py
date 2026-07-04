@@ -146,9 +146,7 @@ class Calculator:
         assert len(call_edges) > 0
         store.close()
 
-    def test_reindex_does_not_duplicate_files(
-        self, store: MapStore, sample_repo: Path
-    ) -> None:
+    def test_reindex_does_not_duplicate_files(self, store: MapStore, sample_repo: Path) -> None:
         """Running index_repo twice should not create duplicate file entries."""
         indexer = Indexer(store)
         indexer.index_repo(sample_repo)
@@ -159,9 +157,7 @@ class Calculator:
         assert len(all_files) == 3
         store.close()
 
-    def test_reindex_does_not_duplicate_symbols(
-        self, store: MapStore, sample_repo: Path
-    ) -> None:
+    def test_reindex_does_not_duplicate_symbols(self, store: MapStore, sample_repo: Path) -> None:
         """Running index_repo twice should not create duplicate symbols."""
         indexer = Indexer(store)
         first_result = indexer.index_repo(sample_repo)
@@ -175,9 +171,7 @@ class Calculator:
         assert len(main_results) == 1
         store.close()
 
-    def test_reindex_updates_changed_hash(
-        self, store: MapStore, sample_repo: Path
-    ) -> None:
+    def test_reindex_updates_changed_hash(self, store: MapStore, sample_repo: Path) -> None:
         """After modifying a file, re-indexing should update the stored hash."""
         indexer = Indexer(store)
         indexer.index_repo(sample_repo)
@@ -200,9 +194,7 @@ def helper(name: str) -> str:
         assert hash_before != hash_after
         store.close()
 
-    def test_index_skips_unsupported_files(
-        self, store: MapStore, sample_repo: Path
-    ) -> None:
+    def test_index_skips_unsupported_files(self, store: MapStore, sample_repo: Path) -> None:
         """Non-source files should not be indexed."""
         # Add non-source files
         (sample_repo / "README.md").write_text("# README")

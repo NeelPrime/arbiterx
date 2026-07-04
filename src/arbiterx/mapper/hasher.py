@@ -14,11 +14,22 @@ class FileHasher:
 
     BUFFER_SIZE = 65536  # 64 KB read chunks
 
-    SKIP_DIRS = frozenset({
-        ".git", ".arbiterx", "node_modules", "__pycache__",
-        ".venv", "venv", "dist", "build", ".tox",
-        ".mypy_cache", ".pytest_cache", "target",
-    })
+    SKIP_DIRS = frozenset(
+        {
+            ".git",
+            ".arbiterx",
+            "node_modules",
+            "__pycache__",
+            ".venv",
+            "venv",
+            "dist",
+            "build",
+            ".tox",
+            ".mypy_cache",
+            ".pytest_cache",
+            "target",
+        }
+    )
 
     def hash_file(self, path: Path) -> str:
         """Compute the SHA-256 hash of a file's contents.

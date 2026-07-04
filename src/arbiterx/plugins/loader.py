@@ -8,7 +8,7 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class PluginInfo:
     module_path: str
     source: str  # "directory", "entry_point", "explicit"
     is_active: bool = False
-    error: Optional[str] = None
+    error: str | None = None
 
 
 @dataclass
@@ -78,7 +78,7 @@ class PluginLoader:
 
     def __init__(
         self,
-        plugin_dirs: Optional[list[str]] = None,
+        plugin_dirs: list[str] | None = None,
         auto_discover: bool = True,
     ) -> None:
         """Initialize the plugin loader.
@@ -124,7 +124,7 @@ class PluginLoader:
             Number of successfully loaded plugins.
         """
         loaded = 0
-        for name, info in self.registry.plugins.items():
+        for name, _info in self.registry.plugins.items():
             if self.load_plugin(name):
                 loaded += 1
         return loaded
@@ -221,25 +221,29 @@ class PluginLoader:
         try:
             if sys.version_info >= (3, 10):
                 from importlib.metadata import entry_points
+
                 eps = entry_points(group=self.ENTRY_POINT_GROUP)
             else:
                 from importlib.metadata import entry_points
+
                 all_eps = entry_points()
                 eps = all_eps.get(self.ENTRY_POINT_GROUP, [])
 
             for ep in eps:
-                discovered.append(PluginInfo(
-                    name=ep.name,
-                    version="unknown",
-                    module_path=ep.value,
-                    source="entry_point",
-                ))
+                discovered.append(
+                    PluginInfo(
+                        name=ep.name,
+                        version="unknown",
+                        module_path=ep.value,
+                        source="entry_point",
+                    )
+                )
         except Exception as e:
             logger.debug(f"Error scanning entry points: {e}")
 
         return discovered
 
-    def _inspect_module_file(self, path: Path) -> Optional[PluginInfo]:
+    def _inspect_module_file(self, path: Path) -> PluginInfo | None:
         """Inspect a Python file for plugin metadata."""
         try:
             # Read file to extract name/version without importing
@@ -276,9 +280,7 @@ class PluginLoader:
 
         if path.exists():
             # Import from file path
-            spec = importlib.util.spec_from_file_location(
-                f"arbiterx_plugin_{path.stem}", str(path)
-            )
+            spec = importlib.util.spec_from_file_location(f"arbiterx_plugin_{path.stem}", str(path))
             if spec is None or spec.loader is None:
                 raise ImportError(f"Cannot create module spec for: {module_path}")
             module = importlib.util.module_from_spec(spec)
@@ -288,7 +290,7 @@ class PluginLoader:
             # Import as dotted module name
             return importlib.import_module(module_path)
 
-    def _find_plugin_class(self, module: Any) -> Optional[type]:
+    def _find_plugin_class(self, module: Any) -> type | None:
         """Find the Plugin class in a loaded module."""
         # Look for a class named 'Plugin' or ending with 'Plugin'
         for attr_name in dir(module):
@@ -300,6 +302,6 @@ class PluginLoader:
 
         # Fallback: look for 'Plugin' attribute directly
         if hasattr(module, "Plugin"):
-            return getattr(module, "Plugin")
+            return module.Plugin
 
         return None
