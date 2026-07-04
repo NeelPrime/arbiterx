@@ -1,7 +1,7 @@
 {
   "name": "ArbiterX",
   "description": "AI code quality middleware — 97% token reduction, smart model routing, quality gate scoring 0-100.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Neel Patel",
   "homepage": "https://github.com/NeelPrime/arbiterx",
   "install": "pip install arbiterx-gate",
