@@ -1,0 +1,10 @@
+{
+  "name": "arbiterx",
+  "version": "0.1.0",
+  "description": "Engineering discipline for AI code generation — enforces 10 arbiterxs for minimal, robust, unbreakable code",
+  "author": "neelpatel",
+  "homepage": "https://github.com/neelpatel/arbiterx",
+  "skills": ["skills/arbiterx.md", "skills/arbiterx-review.md", "skills/arbiterx-gate.md"],
+  "hooks": "hooks/hooks.json",
+  "alwaysOn": true
+}

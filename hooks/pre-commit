@@ -1,0 +1,108 @@
+#!/bin/bash
+# ─────────────────────────────────────────────────────────────────────────────
+# ArbiterX Pre-Commit Hook
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Runs the ArbiterX quality gate on all staged source files.
+# Files scoring below 70 will block the commit.
+#
+# INSTALLATION:
+#   Option 1 — Copy directly:
+#     cp hooks/pre-commit .git/hooks/pre-commit
+#     chmod +x .git/hooks/pre-commit
+#
+#   Option 2 — Symlink (auto-updates):
+#     ln -sf ../../hooks/pre-commit .git/hooks/pre-commit
+#
+#   Option 3 — Configure git hooks path:
+#     git config core.hooksPath hooks
+#
+# REQUIREMENTS:
+#   - Python 3.9+ with arbiterx installed (pip install -e .)
+#   - Or arbiterx available on PYTHONPATH
+#
+# ─────────────────────────────────────────────────────────────────────────────
+set -e
+
+# File extensions to check
+EXTENSIONS="py|ts|tsx|js|jsx|go|rs"
+
+# Get staged files matching our extensions
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.($EXTENSIONS)$" || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "arbiterx: No source files staged, skipping quality gate."
+    exit 0
+fi
+
+echo "arbiterx: Running quality gate on staged files..."
+echo ""
+
+FAILED=0
+CHECKED=0
+
+for FILE in $STAGED_FILES; do
+    # Skip files that no longer exist (edge case)
+    if [ ! -f "$FILE" ]; then
+        continue
+    fi
+
+    CHECKED=$((CHECKED + 1))
+
+    # Run the quality gate via Python one-liner
+    RESULT=$(python3 -c "
+import sys
+from pathlib import Path
+from arbiterx.gate import QualityGate
+from arbiterx.mapper.languages import detect_language
+
+file_path = Path('$FILE')
+code = file_path.read_text(encoding='utf-8')
+
+# Detect language from extension
+ext_map = {'.py':'python','.js':'javascript','.ts':'typescript','.tsx':'typescript',
+            '.jsx':'javascript','.go':'go','.rs':'rust'}
+lang = detect_language(file_path) or ext_map.get(file_path.suffix.lower(), 'python')
+
+gate = QualityGate(passing_score=70)
+result = gate.validate(code, language=lang)
+
+if not result.passed:
+    print(f'FAIL|{result.score}', end='')
+    for issue in result.issues[:3]:
+        print(f'|[{issue.severity}] L{issue.line}: {issue.message}', end='')
+    sys.exit(1)
+else:
+    print(f'PASS|{result.score}', end='')
+    sys.exit(0)
+" 2>/dev/null)
+
+    EXIT_CODE=$?
+
+    if [ $EXIT_CODE -ne 0 ]; then
+        SCORE=$(echo "$RESULT" | cut -d'|' -f2)
+        echo "  ❌ $FILE (score: ${SCORE}/100)"
+        # Print issues
+        echo "$RESULT" | tr '|' '\n' | tail -n +3 | while read -r ISSUE; do
+            if [ -n "$ISSUE" ]; then
+                echo "       $ISSUE"
+            fi
+        done
+        FAILED=$((FAILED + 1))
+    else
+        SCORE=$(echo "$RESULT" | cut -d'|' -f2)
+        echo "  ✅ $FILE (score: ${SCORE}/100)"
+    fi
+done
+
+echo ""
+echo "arbiterx: Checked $CHECKED file(s)."
+
+if [ $FAILED -gt 0 ]; then
+    echo "arbiterx: ❌ $FAILED file(s) failed the quality gate (minimum score: 70)."
+    echo "arbiterx: Fix the issues above or use --no-verify to skip."
+    exit 1
+fi
+
+echo "arbiterx: ✅ All files passed the quality gate."
+exit 0

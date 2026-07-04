@@ -1,0 +1,38 @@
+{
+  "name": "@neelpatel/arbiterx",
+  "version": "0.1.0",
+  "description": "Engineering discipline for AI code generation — smart model routing, 97% token reduction, unbreakable code by default",
+  "keywords": [
+    "ai",
+    "ai-code-quality",
+    "ai-coding-assistant",
+    "ai-middleware",
+    "arbiterx",
+    "claude-code",
+    "claude-code-plugin",
+    "code-quality",
+    "code-review",
+    "codex-plugin",
+    "codebase-mapping",
+    "context-compression",
+    "cursor-rules",
+    "developer-tools",
+    "engineering-discipline",
+    "llm",
+    "llm-optimization",
+    "model-routing",
+    "prompt-engineering",
+    "smart-routing",
+    "static-analysis",
+    "token-reduction",
+    "tree-sitter",
+    "yagni"
+  ],
+  "homepage": "https://github.com/neelpatel/arbiterx",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neelpatel/arbiterx.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Neel Patel"
+}

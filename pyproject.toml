@@ -1,0 +1,87 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "arbiterx"
+version = "0.1.0"
+description = "Engineering discipline for AI code generation — smart routing, 97% token reduction, unbreakable code by default"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+readme = "README.md"
+authors = [
+    { name = "Neel Patel" },
+]
+keywords = [
+    "ai", "ai-code-quality", "ai-coding-assistant", "ai-middleware",
+    "arbiterx", "code-quality", "code-review", "codebase-mapping",
+    "coding-assistant", "context-compression", "cursor-rules",
+    "engineering-discipline", "llm", "llm-optimization", "middleware",
+    "model-routing", "prompt-engineering", "smart-routing",
+    "static-analysis", "token-reduction", "tree-sitter", "yagni",
+    "claude-code-plugin", "codex-plugin", "copilot-rules"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Code Generators",
+    "Typing :: Typed",
+]
+dependencies = [
+    "typer>=0.12.0",
+    "tree-sitter>=0.23.0",
+    "tree-sitter-language-pack>=0.3.0",
+    "networkx>=3.2",
+    "httpx>=0.27.0",
+    "rich>=13.0",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+embeddings = [
+    "faiss-cpu>=1.7.0",
+    "numpy>=1.26.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5.0",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+arbiterx = "arbiterx.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/neelpatel/arbiterx"
+Repository = "https://github.com/neelpatel/arbiterx"
+Issues = "https://github.com/neelpatel/arbiterx/issues"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["arbiterx"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true

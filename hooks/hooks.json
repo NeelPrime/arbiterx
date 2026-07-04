@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "handler": {
+          "type": "command",
+          "command": "echo '{\"context\": \"Tenet engineering mode active. Enforcing: type safety, error handling, YAGNI, resource cleanup, no magic numbers.\"}'"
+        }
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "handler": {
+          "type": "command",
+          "command": "echo '{\"context\": \"Before finishing: verify all functions are typed, all errors handled, no TODOs left, no hardcoded secrets.\"}'"
+        }
+      }
+    ]
+  }
+}

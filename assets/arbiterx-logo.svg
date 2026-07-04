@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" fill="#0f172a" stroke="#6366f1" stroke-width="2"/>
+  
+  <!-- Arbiter scales / balance symbol -->
+  <path d="M60 20 L60 75" stroke="#a5b4fc" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="20" r="4" fill="#6366f1"/>
+  
+  <!-- Left arm -->
+  <path d="M60 35 L30 50" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Left plate -->
+  <path d="M22 50 Q30 55 38 50" stroke="#6366f1" stroke-width="2" fill="none"/>
+  <text x="30" y="47" font-size="8" fill="#22c55e" text-anchor="middle" font-family="monospace">✓</text>
+  
+  <!-- Right arm -->
+  <path d="M60 35 L90 50" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Right plate -->
+  <path d="M82 50 Q90 55 98 50" stroke="#6366f1" stroke-width="2" fill="none"/>
+  <text x="90" y="47" font-size="8" fill="#ef4444" text-anchor="middle" font-family="monospace">✗</text>
+  
+  <!-- X mark at bottom -->
+  <text x="60" y="100" font-size="28" fill="#6366f1" text-anchor="middle" font-family="monospace" font-weight="bold">X</text>
+  
+  <!-- Code brackets -->
+  <text x="38" y="82" font-size="14" fill="#a5b4fc" font-family="monospace">{</text>
+  <text x="76" y="82" font-size="14" fill="#a5b4fc" font-family="monospace">}</text>
+</svg>

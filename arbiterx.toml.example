@@ -1,0 +1,89 @@
+# ArbiterX Configuration
+# Copy this file to arbiterx.toml and customize for your project.
+
+[project]
+# Root directory to map (defaults to current working directory)
+root = "."
+# Directories to exclude from mapping
+exclude = [
+    "node_modules",
+    ".git",
+    ".venv",
+    "dist",
+    "build",
+    "__pycache__",
+    "*.egg-info",
+]
+# Maximum file size to parse (in bytes)
+max_file_size = 1_000_000
+
+[mapping]
+# Strategy for building the codebase map: "tree-sitter" | "regex" | "hybrid"
+strategy = "tree-sitter"
+# Depth of symbol extraction: "signatures" | "full"
+depth = "signatures"
+# Whether to build a dependency graph between modules
+dependency_graph = true
+# Whether to compute embeddings for semantic search
+embeddings = false
+
+[routing]
+# Default model for general queries
+default_model = "anthropic/claude-sonnet-4-20250514"
+# Model for complex reasoning / architecture questions
+reasoning_model = "anthropic/claude-sonnet-4-20250514"
+# Model for fast, simple completions
+fast_model = "anthropic/claude-haiku-3-5"
+# Model for code generation tasks
+code_model = "anthropic/claude-sonnet-4-20250514"
+# Routing strategy: "auto" | "manual" | "cost-optimized" | "quality-optimized"
+strategy = "auto"
+# Maximum tokens to include in context window
+max_context_tokens = 80_000
+
+[providers]
+# Configure AI provider endpoints and preferences
+
+[providers.anthropic]
+enabled = true
+# API key is read from ANTHROPIC_API_KEY env var
+base_url = "https://api.anthropic.com"
+
+[providers.openai]
+enabled = true
+# API key is read from OPENAI_API_KEY env var
+base_url = "https://api.openai.com/v1"
+
+[providers.google]
+enabled = false
+# API key is read from GOOGLE_AI_API_KEY env var
+base_url = "https://generativelanguage.googleapis.com"
+
+[providers.openrouter]
+enabled = false
+# API key is read from OPENROUTER_API_KEY env var
+base_url = "https://openrouter.ai/api/v1"
+
+[context]
+# Token reduction strategy: "map-only" | "map-plus-relevant" | "full-files"
+strategy = "map-plus-relevant"
+# Number of most-relevant symbols/chunks to include beyond the map
+top_k = 25
+# Whether to include file-level summaries in the map
+include_summaries = true
+# Whether to include import/dependency relationships
+include_dependencies = true
+
+[output]
+# Format for the codebase map output: "markdown" | "xml" | "json"
+format = "markdown"
+# Where to store generated maps
+cache_dir = ".arbiterx"
+# How long cached maps remain valid (in seconds); 0 = rebuild every time
+cache_ttl = 300
+
+[logging]
+# Log level: "debug" | "info" | "warning" | "error"
+level = "info"
+# Log file path (empty = stderr only)
+file = ""

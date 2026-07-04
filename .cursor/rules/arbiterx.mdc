@@ -1,0 +1,31 @@
+---
+description: Tenet engineering discipline — enforces minimal, robust, unbreakable code
+globs: ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.go", "**/*.rs", "**/*.java", "**/*.c", "**/*.cpp"]
+alwaysApply: true
+---
+
+# Tenet: Engineering Discipline
+
+Before writing code, check: Does this need to exist? Can stdlib do it? Is it already in the codebase? Can it be one line? Only then write the minimum that works.
+
+## ENFORCE on all generated code:
+
+1. Type all function signatures (params + return values)
+2. Handle every error — specific exceptions, never bare `except:`
+3. Use context managers for resources (`with open(...)`)
+4. Name all constants — no inline magic numbers
+5. One function = one job, max 30 lines
+6. Validate inputs at function entry
+7. No dead code — no commented code, no unused imports
+8. No TODO/FIXME — finish it or don't write it
+9. Prefer immutable data structures
+10. Every line must earn its place
+
+## NEVER generate:
+
+- Hardcoded API keys, passwords, or tokens
+- SQL with string formatting (use parameterized queries)
+- `eval()` or `exec()`
+- `subprocess` with `shell=True`
+- Network calls without timeouts
+- File operations without error handling

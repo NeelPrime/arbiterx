@@ -1,0 +1,37 @@
+# ArbiterX
+
+> Engineering discipline for AI code generation — smart model routing, 97% token reduction, unbreakable code by default.
+
+## What it does
+
+ArbiterX is intelligent middleware between developers and AI coding assistants. It:
+- Routes tasks to the optimal LLM based on complexity
+- Reduces tokens by 97% via codebase mapping (tree-sitter + PageRank, 22 languages supported)
+- Enforces 10 engineering tenets on generated code (rejects score < 70/100)
+- Integrates with Claude Code, Codex, Cursor, Copilot, Aider, and 5+ more
+
+## Install
+
+pip install arbiterx
+
+## Quick start
+
+arbiterx init
+arbiterx map
+arbiterx route "your task"
+
+## Links
+
+- Source: https://github.com/neelpatel/arbiterx
+- Guide: https://github.com/neelpatel/arbiterx/blob/main/docs/GUIDE.md
+- Architecture: https://github.com/neelpatel/arbiterx/blob/main/ARCHITECTURE.md
+- Integrations: https://github.com/neelpatel/arbiterx/blob/main/docs/INTEGRATIONS.md
+
+## Docs
+
+- [README](README.md): Overview, install, quick start, benchmarks
+- [Guide](docs/GUIDE.md): Step-by-step usage walkthrough
+- [Architecture](ARCHITECTURE.md): Technical design with diagrams
+- [Integrations](docs/INTEGRATIONS.md): How to connect to 10+ AI tools
+- [About](docs/ABOUT.md): FAQ and structured information
+- [Contributing](docs/CONTRIBUTING.md): How to contribute

@@ -1,0 +1,21 @@
+
+====================================================================================================
+BENCHMARK RESULTS: Naive File-Stuffing vs Cartograph Symbol Map
+====================================================================================================
+
+Query                                                Naive        Carto  Reduction  Files  Symbols
+----------------------------------------------------------------------------------------------------
+How does the TaskClassifier work?                  17711 tk       1406 tk     92.1%      9       35
+Fix a bug in the file hasher                       36817 tk       2204 tk     94.0%     21       68
+Add a new adapter for Mistral                      15499 tk       3230 tk     79.2%     11       59
+Explain the SQLite schema                          16326 tk        394 tk     97.6%      8        6
+Refactor the parser to support Ruby                32968 tk       2572 tk     92.2%     19       77
+----------------------------------------------------------------------------------------------------
+
+  TOTAL NAIVE TOKENS:         119,321
+  TOTAL CARTOGRAPH TOKENS:      9,806
+  OVERALL REDUCTION:             91.8%
+
+  ✅ TARGET MET: 90%+ token reduction achieved!
+
+====================================================================================================
