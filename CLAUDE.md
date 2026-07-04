@@ -4,7 +4,7 @@ This project uses ArbiterX for code quality enforcement.
 
 ## Setup
 ```bash
-pip install arbiterx-ai
+pip install arbiterx-gate
 arbiterx init
 arbiterx map
 ```

@@ -9,13 +9,13 @@ How to integrate ArbiterX with popular AI coding assistants.
 ArbiterX requires the Python package to be installed for full functionality (quality gate, codebase map, model routing):
 
 ```bash
-pip install arbiterx-ai
+pip install arbiterx-gate
 arbiterx --version   # verify
 arbiterx init        # initialize in your project (once)
 arbiterx map         # build codebase index (optional, enables token savings)
 ```
 
-> **Without `pip install arbiterx-ai`:** Plugin integrations still inject engineering rules into the AI's prompt (prompt-only mode). **With it installed:** The quality gate actively scores generated code and rejects anything below threshold.
+> **Without `pip install arbiterx-gate`:** Plugin integrations still inject engineering rules into the AI's prompt (prompt-only mode). **With it installed:** The quality gate actively scores generated code and rejects anything below threshold.
 
 ---
 
@@ -37,7 +37,7 @@ Claude Code supports plugins — packages of slash commands, hooks, and skills.
 
 ```bash
 # Step 1: Install the arbiterx Python package
-pip install arbiterx-ai
+pip install arbiterx-gate
 
 # Step 2: Install the plugin in Claude Code
 /plugin install NeelPrime/arbiterx
@@ -108,7 +108,7 @@ If you prefer manual hook setup (or want to customize), add this to your Claude 
 - `PostToolUse` → After Claude writes/edits a file, runs the quality gate and reports score
 - `Stop` → Reminds to gate-check before committing
 
-> **Requires:** `pip install arbiterx-ai` for hooks to function. Without it, hooks silently skip.
+> **Requires:** `pip install arbiterx-gate` for hooks to function. Without it, hooks silently skip.
 
 ### Manual Setup (Without Plugin)
 
@@ -134,7 +134,7 @@ Codex CLI has a similar plugin system.
 
 ```bash
 # Step 1: Install the arbiterx Python package
-pip install arbiterx-ai
+pip install arbiterx-gate
 
 # Step 2: Install the plugin in Codex
 codex plugin install NeelPrime/arbiterx
@@ -358,7 +358,7 @@ This works with: Codex, Claude Code, CodeWhale, Swival, OpenCode, and others.
 
 ## 10. As a Git Hook (Automatic)
 
-Requires `pip install arbiterx-ai`. Rejects commits with code scoring below 70/100:
+Requires `pip install arbiterx-gate`. Rejects commits with code scoring below 70/100:
 
 ```bash
 # .git/hooks/pre-commit
@@ -366,7 +366,7 @@ Requires `pip install arbiterx-ai`. Rejects commits with code scoring below 70/1
 set -e
 
 if ! command -v arbiterx &>/dev/null; then
-    echo "⚠️  ArbiterX not installed. Run: pip install arbiterx-ai"
+    echo "⚠️  ArbiterX not installed. Run: pip install arbiterx-gate"
     exit 0
 fi
 

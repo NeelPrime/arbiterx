@@ -36,7 +36,7 @@ Before writing ANY code, follow this ladder:
 
 ## Install ArbiterX for active quality gate:
 ```
-pip install arbiterx-ai
+pip install arbiterx-gate
 arbiterx init
 arbiterx gate --file <your_file>
 ```

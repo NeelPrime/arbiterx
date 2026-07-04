@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square" alt="License"></a>
-  <a href="https://pypi.org/project/arbiterx-ai/"><img src="https://img.shields.io/badge/pypi-arbiterx--ai-orange?style=flat-square" alt="PyPI"></a>
+  <a href="https://pypi.org/project/arbiterx-gate/"><img src="https://img.shields.io/badge/pypi-arbiterx--ai-orange?style=flat-square" alt="PyPI"></a>
   <a href="#"><img src="https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square" alt="Python"></a>
   <a href="tests/"><img src="https://img.shields.io/badge/tests-109%20passing-brightgreen?style=flat-square" alt="Tests"></a>
   <a href="#benchmarks"><img src="https://img.shields.io/badge/token%20savings-97%25-purple?style=flat-square" alt="Token Savings"></a>
@@ -140,7 +140,7 @@ def get_user(user_id: int, conn: Connection) -> Optional[User]:
 ## 📦 Install
 
 ```bash
-pip install arbiterx-ai
+pip install arbiterx-gate
 ```
 
 **From source:**
@@ -169,7 +169,7 @@ arbiterx --version
 
 ```bash
 # Install
-pip install arbiterx-ai
+pip install arbiterx-gate
 
 # Set up (once per project)
 arbiterx init
@@ -183,7 +183,7 @@ arbiterx gate --file main.py  # Score any file 0-100
 
 **That's it. You're running.**
 
-**Using with an AI tool?** After `pip install arbiterx-ai`:
+**Using with an AI tool?** After `pip install arbiterx-gate`:
 ```bash
 # Claude Code
 /plugin install NeelPrime/arbiterx
@@ -195,7 +195,7 @@ codex plugin install NeelPrime/arbiterx
 <p align="center">
   <img src="assets/demo.svg" alt="ArbiterX terminal demo" width="700" />
   <br>
-  <sub>↑ <code>pip install arbiterx-ai && arbiterx init && arbiterx map</code></sub>
+  <sub>↑ <code>pip install arbiterx-gate && arbiterx init && arbiterx map</code></sub>
 </p>
 
 ---
@@ -275,7 +275,7 @@ Every AI output gets scored:
 Install the package and plugin, then start coding. ArbiterX scores all generated code automatically.
 
 ```
-> pip install arbiterx-ai
+> pip install arbiterx-gate
 > /plugin install NeelPrime/arbiterx
 
 ✓ ArbiterX installed. Engineering mode active.
@@ -329,7 +329,7 @@ async def create_user(
 ### Example 2: Using with Codex CLI
 
 ```
-> pip install arbiterx-ai
+> pip install arbiterx-gate
 > codex plugin install NeelPrime/arbiterx
 > codex
 
@@ -552,8 +552,8 @@ $ arbiterx route "redesign the authentication system to support OAuth2 and SAML"
 
 | Tool | Install |
 |------|---------|
-| **Claude Code** | `pip install arbiterx-ai` then `/plugin install NeelPrime/arbiterx` |
-| **Codex CLI** | `pip install arbiterx-ai` then `codex plugin install NeelPrime/arbiterx` |
+| **Claude Code** | `pip install arbiterx-gate` then `/plugin install NeelPrime/arbiterx` |
+| **Codex CLI** | `pip install arbiterx-gate` then `codex plugin install NeelPrime/arbiterx` |
 
 > **Why two steps?** The plugin injects engineering rules. The pip package provides the quality gate that actively scores and rejects bad code.
 
@@ -572,7 +572,7 @@ $ arbiterx route "redesign the authentication system to support OAuth2 and SAML"
 ### As a Git Hook
 
 ```bash
-pip install arbiterx-ai  # required
+pip install arbiterx-gate  # required
 cp hooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 # Now rejects commits scoring below 70/100
@@ -672,12 +672,12 @@ Linters check syntax. ArbiterX enforces engineering decisions — YAGNI, proper 
 - **Saves money** — 97% fewer tokens = 97% lower API bills
 - **Saves time** — No more reviewing AI slop in PRs
 - **Works everywhere** — Claude Code, Codex, Cursor, Copilot, Aider + 5 more
-- **Zero config** — `pip install arbiterx-ai && arbiterx init` and you're done
+- **Zero config** — `pip install arbiterx-gate && arbiterx init` and you're done
 - **Runs locally** — Your code never leaves your machine
 - **Actually tested** — 109 tests, benchmarked on real code, not vaporware
 
 ```bash
-pip install arbiterx-ai && arbiterx init && arbiterx map
+pip install arbiterx-gate && arbiterx init && arbiterx map
 ```
 
 If it saves you from one bad AI-generated commit, **[⭐ give it a star](https://github.com/neelpatel/arbiterx).**

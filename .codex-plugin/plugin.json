@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/NeelPrime/arbiterx",
   "install": {
-    "command": "pip install arbiterx-ai",
+    "command": "pip install arbiterx-gate",
     "checkCommand": "arbiterx --version"
   },
   "skills": [

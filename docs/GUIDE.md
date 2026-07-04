@@ -14,7 +14,7 @@ python3 --version
 Install ArbiterX:
 
 ```bash
-pip install arbiterx-ai
+pip install arbiterx-gate
 ```
 
 Or install from source (if you cloned the repo):

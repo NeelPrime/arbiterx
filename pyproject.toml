@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "arbiterx-ai"
+name = "arbiterx-gate"
 version = "0.1.0"
 description = "Engineering discipline for AI code generation — smart routing, 97% token reduction, unbreakable code by default"
 requires-python = ">=3.9"
