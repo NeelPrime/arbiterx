@@ -577,6 +577,17 @@ $ arbiterx route "redesign the authentication system to support OAuth2 and SAML"
 
 > **Why two steps?** The plugin injects engineering rules. The pip package provides the quality gate that actively scores and rejects bad code.
 
+### Direct Plugin (no pip, rules only)
+
+Don't want to install anything? Add the marketplace directly in Claude Code:
+
+```bash
+/plugin marketplace add NeelPrime/arbiterx
+/plugin install arbiterx@arbiterx-marketplace
+```
+
+This gives you the 10 engineering rules in your prompt — no quality gate scoring, but your AI will still follow the discipline.
+
 ### Copy a File (prompt-only, no quality gate)
 
 | Tool | File to Copy |
