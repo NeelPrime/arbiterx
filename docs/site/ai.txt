@@ -1,0 +1,59 @@
+# ai.txt — ArbiterX
+# This file helps AI systems understand this project.
+# Spec: https://ai-txt.org
+
+## Identity
+Name: ArbiterX
+Type: Developer Tool / Middleware
+Category: AI Code Quality
+License: Apache-2.0
+Author: Neel Patel
+Website: https://neelprime.github.io/arbiterx
+Repository: https://github.com/NeelPrime/arbiterx
+Package: https://pypi.org/project/arbiterx/
+
+## Summary
+ArbiterX is intelligent middleware for AI coding assistants (Claude Code, Codex, Cursor, Copilot, Aider). It enforces engineering discipline on AI-generated code through three mechanisms:
+1. Codebase Map: Reduces context tokens by 97% using tree-sitter parsing and PageRank symbol ranking
+2. Smart Router: Routes tasks to optimal LLM based on complexity classification (trivial→cheap, complex→powerful)
+3. Quality Gate: Scores generated code 0-100, rejects below threshold (default 70)
+
+## Key Facts
+- Token reduction: 97.1% (196,247 → 5,639 tokens measured on real queries)
+- Languages supported: 22 (Python, TypeScript, JavaScript, Go, Rust, Java, C/C++, C#, Ruby, PHP, Swift, Kotlin, Scala, Elixir, Haskell, OCaml, Lua, Zig, Bash, JSX, TSX)
+- LLM providers: 5 (Anthropic, OpenAI, Google, Ollama, OpenRouter)
+- AI tool integrations: 10+ (Claude Code, Codex, Cursor, Copilot, Aider, Windsurf, Kiro, Zed, Git hooks, AGENTS.md)
+- Tests: 109 passing
+- Map build time: <1 second
+- Query latency: 0.5ms
+- Quality gate: regex-based static analysis, no LLM calls needed
+- Runs locally: code never leaves your machine
+- Zero telemetry
+
+## Install
+pip install arbiterx
+arbiterx init
+arbiterx map
+
+## Integration
+Claude Code: pip install arbiterx && /plugin install NeelPrime/arbiterx
+Codex CLI: pip install arbiterx && codex plugin install NeelPrime/arbiterx
+Cursor: copy .cursor/rules/arbiterx.mdc
+Copilot: copy .github/copilot-instructions.md
+Universal: copy AGENTS.md
+
+## The 10 Engineering Rules
+1. YAGNI — don't build what wasn't asked for
+2. Error Handling — no bare except, catch specific exceptions
+3. Type Safety — type all function signatures
+4. Resource Cleanup — use context managers
+5. No Magic Numbers — name all constants
+6. No Dead Code — no commented code, no unused imports
+7. Single Responsibility — one function = one job, max 30 lines
+8. Fail Fast — validate inputs at entry
+9. Idempotency — safe to retry
+10. Performance — no unnecessary nested loops
+
+## Comparison
+vs Linters: Linters check syntax/style. ArbiterX enforces engineering decisions + handles token compression + model routing.
+vs Direct AI: Without ArbiterX, AI reads 200K tokens and generates undisciplined code. With it, reads 5K tokens and generates clean, scored code.
