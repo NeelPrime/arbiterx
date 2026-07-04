@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="400" viewBox="0 0 700 400">
+  <rect width="700" height="400" rx="12" fill="#0f172a"/>
+
+  <!-- Your AI Tool box -->
+  <rect x="100" y="20" width="500" height="60" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="350" y="45" font-family="monospace" font-size="14" fill="#e2e8f0" text-anchor="middle" font-weight="bold">YOUR AI TOOL</text>
+  <text x="350" y="65" font-family="monospace" font-size="11" fill="#94a3b8" text-anchor="middle">Claude Code · Codex · Cursor · Copilot · Aider · Windsurf</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="80" x2="350" y2="110" stroke="#6366f1" stroke-width="2"/>
+  <polygon points="345,108 355,108 350,118" fill="#6366f1"/>
+
+  <!-- ArbiterX main box -->
+  <rect x="50" y="120" width="600" height="200" rx="10" fill="#131a2e" stroke="#6366f1" stroke-width="2"/>
+  <text x="350" y="148" font-family="monospace" font-size="15" fill="#818cf8" text-anchor="middle" font-weight="bold">ARBITERX</text>
+
+  <!-- Box 1: DECIDE -->
+  <rect x="75" y="165" width="170" height="135" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="160" y="188" font-family="monospace" font-size="12" fill="#f97316" text-anchor="middle" font-weight="bold">① DECIDE</text>
+  <text x="160" y="210" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">Route to</text>
+  <text x="160" y="226" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">right model</text>
+  <text x="160" y="256" font-family="monospace" font-size="10" fill="#94a3b8" text-anchor="middle">trivial → haiku</text>
+  <text x="160" y="274" font-family="monospace" font-size="10" fill="#94a3b8" text-anchor="middle">hard → opus</text>
+
+  <!-- Box 2: COMPRESS -->
+  <rect x="265" y="165" width="170" height="135" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="350" y="188" font-family="monospace" font-size="12" fill="#06b6d4" text-anchor="middle" font-weight="bold">② COMPRESS</text>
+  <text x="350" y="210" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">Send 2KB</text>
+  <text x="350" y="226" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">not 200KB</text>
+  <text x="350" y="256" font-family="monospace" font-size="10" fill="#94a3b8" text-anchor="middle">symbols +</text>
+  <text x="350" y="274" font-family="monospace" font-size="10" fill="#94a3b8" text-anchor="middle">signatures only</text>
+
+  <!-- Box 3: ENFORCE -->
+  <rect x="455" y="165" width="170" height="135" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="540" y="188" font-family="monospace" font-size="12" fill="#22c55e" text-anchor="middle" font-weight="bold">③ ENFORCE</text>
+  <text x="540" y="210" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">Score output 0-100</text>
+  <text x="540" y="226" font-family="monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">Reject if below 70</text>
+  <text x="540" y="252" font-family="monospace" font-size="10" fill="#22c55e" text-anchor="middle">✓ security</text>
+  <text x="540" y="268" font-family="monospace" font-size="10" fill="#22c55e" text-anchor="middle">✓ robustness</text>
+  <text x="540" y="284" font-family="monospace" font-size="10" fill="#22c55e" text-anchor="middle">✓ efficiency</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="320" x2="350" y2="350" stroke="#22c55e" stroke-width="2"/>
+  <polygon points="345,348 355,348 350,358" fill="#22c55e"/>
+
+  <!-- Output -->
+  <text x="350" y="380" font-family="monospace" font-size="13" fill="#22c55e" text-anchor="middle" font-weight="bold">Clean, Minimal, Unbreakable Code</text>
+</svg>

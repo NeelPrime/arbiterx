@@ -83,31 +83,9 @@ def get_user(user_id: int, conn: Connection) -> Optional[User]:
 
 ## 🏗️ What ArbiterX Does
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│                       YOUR AI TOOL                             │
-│  Claude Code • Codex • Cursor • Copilot • Aider • Windsurf   │
-└───────────────────────────────┬────────────────────────────────┘
-                                │
-                                ▼
-┌────────────────────────────────────────────────────────────────┐
-│                         ARBITERX                               │
-│                                                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐ │
-│  │ ① DECIDE     │  │ ② COMPRESS   │  │ ③ ENFORCE            │ │
-│  │              │  │              │  │                      │ │
-│  │ Route to     │  │ Send 2KB     │  │ Score output 0-100   │ │
-│  │ right model  │  │ not 200KB    │  │ Reject if below 70   │ │
-│  │              │  │              │  │                      │ │
-│  │ trivial→     │  │ symbols +    │  │ ✓ security           │ │
-│  │   haiku      │  │ signatures   │  │ ✓ robustness         │ │
-│  │ hard→opus    │  │ only         │  │ ✓ efficiency         │ │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘ │
-└────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-                  Clean, Minimal, Unbreakable Code
-```
+<p align="center">
+  <img src="assets/what-arbiterx-does.svg" alt="ArbiterX Architecture — Decide, Compress, Enforce" width="700" />
+</p>
 
 ---
 
