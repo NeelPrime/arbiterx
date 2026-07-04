@@ -23,4 +23,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Routing table with configurable model-to-task mappings
 - Context handoff protocol for multi-model conversations
 
-[0.1.0]: https://github.com/neelpatel/arbiterx/releases/tag/v0.1.0
+[0.1.0]: https://github.com/NeelPrime/arbiterx/releases/tag/v0.1.0

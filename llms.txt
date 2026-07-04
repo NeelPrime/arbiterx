@@ -7,7 +7,7 @@
 ArbiterX is intelligent middleware between developers and AI coding assistants. It:
 - Routes tasks to the optimal LLM based on complexity
 - Reduces tokens by 97% via codebase mapping (tree-sitter + PageRank, 22 languages supported)
-- Enforces 10 engineering tenets on generated code (rejects score < 70/100)
+- Enforces 10 engineering rules on generated code (rejects score < 70/100)
 - Integrates with Claude Code, Codex, Cursor, Copilot, Aider, and 5+ more
 
 ## Install

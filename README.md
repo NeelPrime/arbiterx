@@ -146,7 +146,7 @@ pip install arbiterx-gate
 **From source:**
 
 ```bash
-git clone https://github.com/neelpatel/arbiterx.git
+git clone https://github.com/NeelPrime/arbiterx.git
 cd arbiterx
 pip install -e .
 ```
@@ -680,7 +680,7 @@ Linters check syntax. ArbiterX enforces engineering decisions — YAGNI, proper 
 pip install arbiterx-gate && arbiterx init && arbiterx map
 ```
 
-If it saves you from one bad AI-generated commit, **[⭐ give it a star](https://github.com/neelpatel/arbiterx).**
+If it saves you from one bad AI-generated commit, **[⭐ give it a star](https://github.com/NeelPrime/arbiterx).**
 
 ---
 

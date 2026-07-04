@@ -215,7 +215,7 @@ for v in report.violations:
 ### Claude Code (1 command)
 
 ```
-/plugin install neelpatel/arbiterx
+/plugin install NeelPrime/arbiterx
 ```
 
 Done. ArbiterX is now active in every Claude Code session.
@@ -223,7 +223,7 @@ Done. ArbiterX is now active in every Claude Code session.
 ### Codex CLI (1 command)
 
 ```bash
-codex plugin install neelpatel/arbiterx
+codex plugin install NeelPrime/arbiterx
 ```
 
 ### Cursor

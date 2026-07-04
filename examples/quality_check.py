@@ -162,7 +162,7 @@ if __name__ == "__main__":
         print_gate_result(label, gate_result)
 
         # Run SelfInterrogator engineering enforcement
-        print("  ── Engineering Tenets (SelfInterrogator) ──")
+        print("  ── Engineering Rules (SelfInterrogator) ──")
         report = enforcer.enforce(code, language="python")
         print_enforcement_report(label, report)
 

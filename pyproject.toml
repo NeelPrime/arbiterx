@@ -62,9 +62,9 @@ dev = [
 arbiterx = "arbiterx.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/neelpatel/arbiterx"
-Repository = "https://github.com/neelpatel/arbiterx"
-Issues = "https://github.com/neelpatel/arbiterx/issues"
+Homepage = "https://github.com/NeelPrime/arbiterx"
+Repository = "https://github.com/NeelPrime/arbiterx"
+Issues = "https://github.com/NeelPrime/arbiterx/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/arbiterx"]

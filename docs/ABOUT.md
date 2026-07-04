@@ -34,8 +34,8 @@ arbiterx query Symbol  # Look up any function/class
 
 ## What AI tools does ArbiterX work with?
 
-- Claude Code (via plugin: `/plugin install neelpatel/arbiterx`)
-- OpenAI Codex CLI (via plugin: `codex plugin install neelpatel/arbiterx`)
+- Claude Code (via plugin: `/plugin install NeelPrime/arbiterx`)
+- OpenAI Codex CLI (via plugin: `codex plugin install NeelPrime/arbiterx`)
 - Cursor (via `.cursor/rules/` file)
 - GitHub Copilot (via `.github/copilot-instructions.md`)
 - Aider (via `AGENTS.md` or `CONVENTIONS.md`)
