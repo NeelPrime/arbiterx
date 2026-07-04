@@ -4,13 +4,28 @@ How to integrate ArbiterX with popular AI coding assistants.
 
 ---
 
+## Prerequisites
+
+ArbiterX requires the Python package to be installed for full functionality (quality gate, codebase map, model routing):
+
+```bash
+pip install arbiterx
+arbiterx --version   # verify
+arbiterx init        # initialize in your project (once)
+arbiterx map         # build codebase index (optional, enables token savings)
+```
+
+> **Without `pip install arbiterx`:** Plugin integrations still inject engineering rules into the AI's prompt (prompt-only mode). **With it installed:** The quality gate actively scores generated code and rejects anything below threshold.
+
+---
+
 ## Overview: 3 Ways to Integrate
 
-| Method | Works With | Effort |
-|--------|-----------|--------|
-| **Plugin** (recommended) | Claude Code, Codex | 1 command |
-| **Hooks** (powerful) | Claude Code, Codex | Copy a config |
-| **Rules file** (universal) | Cursor, Windsurf, Copilot, Aider, Kiro, Zed | Copy a file |
+| Method | Works With | Effort | Quality Gate |
+|--------|-----------|--------|--------------|
+| **Plugin** (recommended) | Claude Code, Codex | 1 command | ✅ Active (requires pip install) |
+| **Hooks** (powerful) | Claude Code, Codex | Copy a config | ✅ Active (requires pip install) |
+| **Rules file** (universal) | Cursor, Windsurf, Copilot, Aider, Kiro, Zed | Copy a file | ❌ Prompt-only |
 
 ---
 
@@ -20,20 +35,24 @@ Claude Code supports plugins — packages of slash commands, hooks, and skills.
 
 ### Install
 
-Open Claude Code and run:
+```bash
+# Step 1: Install the arbiterx Python package
+pip install arbiterx
 
-```
-/plugin install neelpatel/arbiterx
+# Step 2: Install the plugin in Claude Code
+/plugin install NeelPrime/arbiterx
 ```
 
-That's it. ArbiterX is now active in your Claude Code session.
+That's it. ArbiterX is now active — the quality gate will score all generated code automatically.
 
 ### What It Does
 
 Once installed, the plugin:
-- Injects engineering principles into every prompt (the 10 arbiterxs)
-- Adds hooks that validate generated code before it's written to files
-- Provides slash commands for quick access
+- **Installs** the `arbiterx` CLI tool via pip (if not already present)
+- **Runs `arbiterx init`** to set up the `.arbiterx/` config directory
+- **Injects engineering principles** into every prompt (the 10 tenets)
+- **Runs the quality gate** on every file the AI writes or edits (PostToolUse hook)
+- **Scores code 0–100** and reports issues inline
 
 ### Slash Commands Available
 
@@ -53,21 +72,21 @@ If you prefer manual hook setup (or want to customize), add this to your Claude 
 ```json
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "handler": {
+          "type": "command",
+          "command": "arbiterx --version && echo 'ArbiterX engineering mode active.'"
+        }
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "write_to_file|edit_file|create_file",
         "handler": {
           "type": "command",
-          "command": "arbiterx-hook validate"
-        }
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "*",
-        "handler": {
-          "type": "command",
-          "command": "arbiterx-hook inject-principles"
+          "command": "arbiterx gate --file \"$TOOL_ARG_PATH\" --json"
         }
       }
     ],
@@ -76,7 +95,7 @@ If you prefer manual hook setup (or want to customize), add this to your Claude 
         "matcher": "*",
         "handler": {
           "type": "command",
-          "command": "arbiterx-hook post-check"
+          "command": "echo 'Run: arbiterx gate on changed files before committing.'"
         }
       }
     ]
@@ -85,9 +104,11 @@ If you prefer manual hook setup (or want to customize), add this to your Claude 
 ```
 
 **What each hook does:**
-- `PostToolUse` → After Claude writes/edits a file, validate it against the quality gate
-- `UserPromptSubmit` → Before every prompt, inject engineering principles as context
-- `Stop` → After task completion, score the overall output
+- `SessionStart` → Verifies arbiterx is installed and activates engineering mode
+- `PostToolUse` → After Claude writes/edits a file, runs the quality gate and reports score
+- `Stop` → Reminds to gate-check before committing
+
+> **Requires:** `pip install arbiterx` for hooks to function. Without it, hooks silently skip.
 
 ### Manual Setup (Without Plugin)
 
@@ -112,7 +133,11 @@ Codex CLI has a similar plugin system.
 ### Install
 
 ```bash
-codex plugin install neelpatel/arbiterx
+# Step 1: Install the arbiterx Python package
+pip install arbiterx
+
+# Step 2: Install the plugin in Codex
+codex plugin install NeelPrime/arbiterx
 ```
 
 Then open `/plugins` in Codex, select ArbiterX, and enable it.
@@ -333,31 +358,39 @@ This works with: Codex, Claude Code, CodeWhale, Swival, OpenCode, and others.
 
 ## 10. As a Git Hook (Automatic)
 
-Run ArbiterX's quality gate on every commit:
+Requires `pip install arbiterx`. Rejects commits with code scoring below 70/100:
 
 ```bash
 # .git/hooks/pre-commit
 #!/bin/bash
-changed_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|ts|js|go|rs)$')
+set -e
+
+if ! command -v arbiterx &>/dev/null; then
+    echo "⚠️  ArbiterX not installed. Run: pip install arbiterx"
+    exit 0
+fi
+
+changed_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|ts|js|go|rs)$' || true)
+
+if [ -z "$changed_files" ]; then
+    exit 0
+fi
 
 for file in $changed_files; do
-    score=$(python3 -c "
-from arbiterx.gate import QualityGate
-gate = QualityGate()
-code = open('$file').read()
-result = gate.validate(code, '$file'.split('.')[-1])
-print(result.score)
-")
+    result=$(arbiterx gate --file "$file" --json 2>/dev/null)
+    score=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin).get('score',100))" 2>/dev/null || echo "100")
     if [ "$score" -lt 70 ]; then
         echo "❌ ArbiterX: $file scored $score/100 (minimum 70)"
+        echo "$result" | python3 -c "import sys,json; [print(f'   • {i}') for i in json.load(sys.stdin).get('issues',[])]" 2>/dev/null
         exit 1
     fi
 done
 echo "✓ ArbiterX: all files pass quality gate"
 ```
 
-Make it executable:
+Install it:
 ```bash
+cp hooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 

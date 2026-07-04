@@ -5,7 +5,16 @@
         "matcher": "*",
         "handler": {
           "type": "command",
-          "command": "echo '{\"context\": \"Tenet engineering mode active. Enforcing: type safety, error handling, YAGNI, resource cleanup, no magic numbers.\"}'"
+          "command": "command -v arbiterx >/dev/null 2>&1 && echo '{\"context\": \"ArbiterX engineering mode active. Quality gate will score all generated code. Enforcing: type safety, error handling, YAGNI, resource cleanup, no magic numbers.\"}' || echo '{\"context\": \"ArbiterX not installed. Run: pip install arbiterx\", \"error\": true}'"
+        }
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|edit_file|create_file",
+        "handler": {
+          "type": "command",
+          "command": "command -v arbiterx >/dev/null 2>&1 && arbiterx gate --file \"$TOOL_ARG_PATH\" --json 2>/dev/null || true"
         }
       }
     ],
@@ -14,7 +23,7 @@
         "matcher": "*",
         "handler": {
           "type": "command",
-          "command": "echo '{\"context\": \"Before finishing: verify all functions are typed, all errors handled, no TODOs left, no hardcoded secrets.\"}'"
+          "command": "command -v arbiterx >/dev/null 2>&1 && echo '{\"context\": \"Run arbiterx gate on changed files to verify quality before committing.\"}' || true"
         }
       }
     ]

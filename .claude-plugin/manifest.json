@@ -1,10 +1,23 @@
 {
   "name": "arbiterx",
   "version": "0.1.0",
-  "description": "Engineering discipline for AI code generation — enforces 10 arbiterxs for minimal, robust, unbreakable code",
-  "author": "neelpatel",
-  "homepage": "https://github.com/neelpatel/arbiterx",
-  "skills": ["skills/arbiterx.md", "skills/arbiterx-review.md", "skills/arbiterx-gate.md"],
+  "description": "Engineering discipline for AI code generation — enforces 10 tenets for minimal, robust, unbreakable code",
+  "author": "NeelPrime",
+  "homepage": "https://github.com/NeelPrime/arbiterx",
+  "install": {
+    "command": "pip install arbiterx",
+    "checkCommand": "arbiterx --version",
+    "instructions": "Requires Python 3.9+. Install with: pip install arbiterx"
+  },
+  "setup": {
+    "command": "arbiterx init",
+    "description": "Initialize ArbiterX in the current project"
+  },
+  "skills": [
+    "skills/tenet.md",
+    "skills/tenet-review.md",
+    "skills/tenet-gate.md"
+  ],
   "hooks": "hooks/hooks.json",
   "alwaysOn": true
 }

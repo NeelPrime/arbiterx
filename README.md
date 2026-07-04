@@ -168,13 +168,29 @@ arbiterx --version
 ## 🚀 Quick Start
 
 ```bash
-arbiterx init           # Set up (once per project)
+# Install
+pip install arbiterx
+
+# Set up (once per project)
+arbiterx init
 arbiterx map            # Index your codebase (30 seconds)
+
+# Use
 arbiterx route "task"   # See how any task gets classified
 arbiterx query Symbol   # Find any function instantly
+arbiterx gate --file main.py  # Score any file 0-100
 ```
 
-**That's 4 commands. You're running.**
+**That's it. You're running.**
+
+**Using with an AI tool?** After `pip install arbiterx`:
+```bash
+# Claude Code
+/plugin install NeelPrime/arbiterx
+
+# Codex CLI
+codex plugin install NeelPrime/arbiterx
+```
 
 <p align="center">
   <img src="assets/demo.svg" alt="ArbiterX terminal demo" width="700" />
@@ -256,12 +272,14 @@ Every AI output gets scored:
 
 ### Example 1: Using with Claude Code
 
-Install the plugin and start coding. ArbiterX works automatically in the background.
+Install the package and plugin, then start coding. ArbiterX scores all generated code automatically.
 
 ```
-> /plugin install neelpatel/arbiterx
+> pip install arbiterx
+> /plugin install NeelPrime/arbiterx
 
 ✓ ArbiterX installed. Engineering mode active.
+✓ Quality gate will score all generated code.
 
 > Build a REST endpoint to create users
 
@@ -311,7 +329,8 @@ async def create_user(
 ### Example 2: Using with Codex CLI
 
 ```
-> codex plugin install neelpatel/arbiterx
+> pip install arbiterx
+> codex plugin install NeelPrime/arbiterx
 > codex
 
 You: Write a file downloader with retry logic
@@ -529,14 +548,16 @@ $ arbiterx route "redesign the authentication system to support OAuth2 and SAML"
 <a name="integrations"></a>
 ## 🔌 Integrations
 
-### One-Command Install
+### Plugin Install (recommended)
 
-| Tool | Command |
+| Tool | Install |
 |------|---------|
-| **Claude Code** | `/plugin install neelpatel/arbiterx` |
-| **Codex CLI** | `codex plugin install neelpatel/arbiterx` |
+| **Claude Code** | `pip install arbiterx` then `/plugin install NeelPrime/arbiterx` |
+| **Codex CLI** | `pip install arbiterx` then `codex plugin install NeelPrime/arbiterx` |
 
-### Copy a File
+> **Why two steps?** The plugin injects engineering rules. The pip package provides the quality gate that actively scores and rejects bad code.
+
+### Copy a File (prompt-only, no quality gate)
 
 | Tool | File to Copy |
 |------|-------------|
@@ -551,9 +572,10 @@ $ arbiterx route "redesign the authentication system to support OAuth2 and SAML"
 ### As a Git Hook
 
 ```bash
-# Rejects commits with code scoring below 70/100
+pip install arbiterx  # required
 cp hooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
+# Now rejects commits scoring below 70/100
 ```
 
 📖 **[Full integration guide →](docs/INTEGRATIONS.md)**
