@@ -1,4 +1,4 @@
-# Engineering Rules (Tenet)
+# Engineering Rules (ArbiterX)
 
 All generated code must follow these rules:
 

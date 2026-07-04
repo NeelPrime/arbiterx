@@ -190,7 +190,7 @@ print(f"Score: {report.score}/100")
 print(f"Passed: {report.passed}")
 
 for v in report.violations:
-    print(f"  [{v.severity.value}] {v.tenet_name}: {v.description}")
+    print(f"  [{v.severity.value}] {v.arbiterx_name}: {v.description}")
 ```
 
 ### The 10 rules explained simply

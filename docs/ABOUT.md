@@ -8,7 +8,7 @@ ArbiterX is an open-source Python library that acts as intelligent middleware be
 
 2. **97% Token Reduction** — Builds a persistent codebase map using tree-sitter AST parsing and PageRank symbol ranking. Sends only relevant function signatures to the LLM instead of full files.
 
-3. **Code Quality Enforcement** — Scores every AI-generated output against 10 engineering tenets and a security/robustness quality gate. Rejects code scoring below 70/100.
+3. **Code Quality Enforcement** — Scores every AI-generated output against 10 engineering rules and a security/robustness quality gate. Rejects code scoring below 70/100.
 
 ## Who is it for?
 

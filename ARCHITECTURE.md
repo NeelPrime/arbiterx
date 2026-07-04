@@ -13,7 +13,7 @@
                                  │ task + context
                                  ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         TENET MIDDLEWARE                             │
+│                         ARBITERX MIDDLEWARE                          │
 │                                                                     │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────────┐     │
 │  │ Principles  │  │ Self-Check   │  │ Codebase Map           │     │
@@ -601,7 +601,7 @@ Generated Code
 │  │     → Unnecessary list() on generators                │  │
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  5. TENET SCORE (0-100)                               │  │
+│  │  5. ARBITERX SCORE (0-100)                             │  │
 │  │     → 10 engineering arbiterxs scored independently      │  │
 │  │     → Each violation reduces score                    │  │
 │  │     → Pass threshold: 70/100 (configurable)           │  │

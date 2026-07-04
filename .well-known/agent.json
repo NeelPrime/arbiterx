@@ -1,0 +1,27 @@
+{
+  "name": "ArbiterX",
+  "description": "AI code quality middleware — 97% token reduction, smart model routing, quality gate scoring 0-100.",
+  "version": "0.1.0",
+  "author": "Neel Patel",
+  "homepage": "https://github.com/NeelPrime/arbiterx",
+  "install": "pip install arbiterx",
+  "capabilities": [
+    "code-quality-gate",
+    "codebase-mapping",
+    "smart-model-routing",
+    "engineering-rule-enforcement"
+  ],
+  "supported_tools": [
+    "claude-code",
+    "codex-cli",
+    "cursor",
+    "github-copilot",
+    "aider",
+    "windsurf",
+    "kiro",
+    "zed",
+    "chatgpt"
+  ],
+  "rules_file": "AGENTS.md",
+  "llms_txt": "llms.txt"
+}

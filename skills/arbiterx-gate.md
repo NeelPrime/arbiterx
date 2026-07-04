@@ -1,4 +1,4 @@
-# Tenet Gate
+# ArbiterX Gate
 
 Run a quality gate on the last generated code or a specified file.
 

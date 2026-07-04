@@ -50,7 +50,7 @@ That's it. ArbiterX is now active — the quality gate will score all generated 
 Once installed, the plugin:
 - **Installs** the `arbiterx` CLI tool via pip (if not already present)
 - **Runs `arbiterx init`** to set up the `.arbiterx/` config directory
-- **Injects engineering principles** into every prompt (the 10 tenets)
+- **Injects engineering principles** into every prompt (the 10 rules)
 - **Runs the quality gate** on every file the AI writes or edits (PostToolUse hook)
 - **Scores code 0–100** and reports issues inline
 

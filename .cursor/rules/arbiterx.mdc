@@ -1,10 +1,10 @@
 ---
-description: Tenet engineering discipline — enforces minimal, robust, unbreakable code
+description: ArbiterX engineering discipline — enforces minimal, robust, unbreakable code
 globs: ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.go", "**/*.rs", "**/*.java", "**/*.c", "**/*.cpp"]
 alwaysApply: true
 ---
 
-# Tenet: Engineering Discipline
+# ArbiterX: Engineering Discipline
 
 Before writing code, check: Does this need to exist? Can stdlib do it? Is it already in the codebase? Can it be one line? Only then write the minimum that works.
 

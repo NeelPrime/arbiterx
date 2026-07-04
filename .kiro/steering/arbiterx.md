@@ -1,4 +1,4 @@
-# Tenet: Engineering Discipline
+# ArbiterX: Engineering Discipline
 
 Enforce these principles on all generated code:
 

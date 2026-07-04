@@ -1,0 +1,33 @@
+{
+  "name": "arbiterx",
+  "version": "0.1.0",
+  "description": "Engineering discipline for AI code generation — 10 rules for minimal, robust code with quality gate scoring.",
+  "author": {
+    "name": "Neel Patel",
+    "url": "https://github.com/NeelPrime"
+  },
+  "homepage": "https://github.com/NeelPrime/arbiterx",
+  "install": {
+    "command": "pip install arbiterx",
+    "checkCommand": "arbiterx --version"
+  },
+  "skills": [
+    {
+      "name": "arbiterx",
+      "file": "skills/arbiterx.md",
+      "alwaysOn": true,
+      "description": "Engineering discipline rules — always active"
+    },
+    {
+      "name": "arbiterx-review",
+      "file": "skills/arbiterx-review.md",
+      "description": "Review code against engineering rules"
+    },
+    {
+      "name": "arbiterx-gate",
+      "file": "skills/arbiterx-gate.md",
+      "description": "Run quality gate on generated code"
+    }
+  ],
+  "hooks": "hooks/hooks.json"
+}

@@ -259,9 +259,9 @@ def export_rules(
     """Export engineering principles as rules files for AI coding tools."""
     from arbiterx.principles import ENGINEERING_PREAMBLE
 
-    # Build compact content: preamble tenets + NEVER list + self-check
+    # Build compact content: preamble rules + NEVER list + self-check
     lines: list[str] = ["# ArbiterX Engineering Rules", ""]
-    # Numbered tenets from preamble
+    # Numbered rules from preamble
     for line in ENGINEERING_PREAMBLE.strip().splitlines()[1:]:
         if line.strip():
             lines.append(line.strip())

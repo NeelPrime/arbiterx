@@ -1,17 +1,13 @@
-# ArbiterX — Engineering Discipline for AI Code Generation
+# Code Conventions (ArbiterX)
 
-## Before Writing Code
-
-Run this ladder. Stop at the first "yes":
-
-1. Does this need to exist? → No → skip (YAGNI)
-2. Already in this codebase? → Reuse it
+## Decision Ladder
+1. Does this need to exist? → No: skip (YAGNI)
+2. Already in codebase? → Reuse it
 3. Stdlib does it? → Use stdlib
-4. Installed dep does it? → Use it
-5. One-liner? → One line, no abstraction
-6. Only then → write the minimum that works
+4. One-liner? → One line, no abstraction
+5. Only then → write the minimum that works
 
-## The 10 Rules (Always Enforce)
+## The 10 Rules
 
 1. Type all function signatures (params + return)
 2. Handle every error path (no bare except, no swallowed errors)
@@ -33,8 +29,8 @@ Run this ladder. Stop at the first "yes":
 - Network calls without timeouts
 - File ops without error handling
 
-## After Writing
-
-- Can any line be deleted without breaking behavior? → Delete it
-- Is there a simpler stdlib approach? → Use it
-- Would this pass review by the strictest engineer you know? → If not, fix it
+## Quality Check
+```bash
+pip install arbiterx
+arbiterx gate --file <file>   # Score 0-100, reject below 70
+```

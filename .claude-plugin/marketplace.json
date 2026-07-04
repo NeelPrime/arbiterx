@@ -1,0 +1,19 @@
+{
+  "name": "arbiterx-marketplace",
+  "description": "ArbiterX — AI code quality middleware. Quality gate, smart routing, 97% token reduction.",
+  "owner": {
+    "name": "Neel Patel",
+    "url": "https://github.com/NeelPrime"
+  },
+  "plugins": [
+    {
+      "name": "arbiterx",
+      "source": ".",
+      "description": "Engineering discipline for AI code generation — enforces 10 rules for minimal, robust, unbreakable code. Includes quality gate, smart routing, and codebase mapping.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Neel Patel"
+      }
+    }
+  ]
+}

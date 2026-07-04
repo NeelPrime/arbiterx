@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Task classifier with heuristic-based type, complexity, and scope inference
 - 5 model adapters: OpenAI, Anthropic, Ollama, Google Gemini, and local fallback
 - Quality gate with syntax, security, robustness, efficiency, style, and completeness checks
-- 10 engineering tenets enforced via static analysis (YAGNI, error handling, type safety, resource cleanup, no magic numbers, no dead code, single responsibility, fail fast, idempotency, performance)
+- 10 engineering rules enforced via static analysis (YAGNI, error handling, type safety, resource cleanup, no magic numbers, no dead code, single responsibility, fail fast, idempotency, performance)
 - CLI commands: `arbiterx map`, `arbiterx gate`, `arbiterx classify`, `arbiterx query`
 - Plugin system with manifest-based loading for custom adapters and classifiers
 - 10+ tool integrations: VS Code, Cursor, Windsurf, GitHub Copilot, Codex CLI, Claude Code, Kiro, JetBrains, Neovim, Emacs

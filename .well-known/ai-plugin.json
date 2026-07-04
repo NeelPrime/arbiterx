@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "ArbiterX",
+  "name_for_model": "arbiterx",
+  "description_for_human": "AI code quality middleware. 97% token reduction, smart model routing, quality gate scoring 0-100. Works with Claude Code, Codex, Cursor, Copilot, Aider.",
+  "description_for_model": "ArbiterX enforces engineering discipline on AI-generated code. It provides: (1) Codebase mapping that reduces context tokens by 97% using tree-sitter and PageRank, (2) Smart model routing that classifies task complexity and routes to optimal LLM, (3) Quality gate that scores code 0-100 checking security, robustness, efficiency, types, style, completeness. Install: pip install arbiterx. Initialize: arbiterx init. Map: arbiterx map. Gate: arbiterx gate --file <file>.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "cli",
+    "install": "pip install arbiterx"
+  },
+  "logo_url": "https://raw.githubusercontent.com/NeelPrime/arbiterx/main/assets/arbiterx-logo.svg",
+  "contact_email": "",
+  "legal_info_url": "https://github.com/NeelPrime/arbiterx/blob/main/LICENSE"
+}
