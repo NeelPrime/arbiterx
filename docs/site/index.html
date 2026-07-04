@@ -518,20 +518,24 @@
     <div class="container">
       <h2 class="animate-on-scroll">Quick Start</h2>
       <p class="section-sub animate-on-scroll">Install in seconds. Works with your existing AI tool.</p>
-      <pre class="animate-on-scroll"><code><span style="color:#7aa2f7">$</span> pip install arbiterx-gate
+      <pre class="animate-on-scroll"><code><span style="color:#565f89"># Install</span>
+<span style="color:#7aa2f7">$</span> pip install arbiterx-gate
+
+<span style="color:#565f89"># Or with pip3 / virtual environment:</span>
+<span style="color:#7aa2f7">$</span> pip3 install arbiterx-gate
+<span style="color:#7aa2f7">$</span> python3 -m venv venv && source venv/bin/activate && pip install arbiterx-gate
+
+<span style="color:#565f89"># Initialize (once per project)</span>
 <span style="color:#7aa2f7">$</span> arbiterx init
 <span style="color:#7aa2f7">$</span> arbiterx map              <span style="color:#565f89"># Index your codebase (~30s)</span>
 
-<span style="color:#565f89"># Use with Claude Code:</span>
-<span style="color:#7aa2f7">$</span> /plugin install NeelPrime/arbiterx
+<span style="color:#565f89"># Use</span>
+<span style="color:#7aa2f7">$</span> arbiterx route "task"     <span style="color:#565f89"># See model routing</span>
+<span style="color:#7aa2f7">$</span> arbiterx gate --file f.py <span style="color:#565f89"># Score any file 0-100</span>
 
-<span style="color:#565f89"># Use with Codex CLI:</span>
-<span style="color:#7aa2f7">$</span> codex plugin install NeelPrime/arbiterx
-
-<span style="color:#565f89"># Use with Cursor, Copilot, Aider:</span>
-<span style="color:#7aa2f7">$</span> arbiterx export-rules --format cursor
-<span style="color:#7aa2f7">$</span> arbiterx export-rules --format copilot
-<span style="color:#7aa2f7">$</span> arbiterx export-rules --format agents   <span style="color:#565f89"># universal</span></code></pre>
+<span style="color:#565f89"># Plugin install for AI tools:</span>
+<span style="color:#7aa2f7">$</span> /plugin install NeelPrime/arbiterx          <span style="color:#565f89"># Claude Code</span>
+<span style="color:#7aa2f7">$</span> codex plugin install NeelPrime/arbiterx     <span style="color:#565f89"># Codex CLI</span></code></pre>
     </div>
   </section>
 
