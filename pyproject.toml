@@ -66,6 +66,9 @@ Homepage = "https://github.com/neelpatel/arbiterx"
 Repository = "https://github.com/neelpatel/arbiterx"
 Issues = "https://github.com/neelpatel/arbiterx/issues"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/arbiterx"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
