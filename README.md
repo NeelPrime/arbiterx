@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square" alt="License"></a>
-  <a href="https://pypi.org/project/arbiterx-gate/"><img src="https://img.shields.io/badge/pypi-arbiterx--ai-orange?style=flat-square" alt="PyPI"></a>
+  <a href="https://pypi.org/project/arbiterx-gate/"><img src="https://img.shields.io/badge/pypi-arbiterx--gate-orange?style=flat-square" alt="PyPI"></a>
   <a href="#"><img src="https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square" alt="Python"></a>
   <a href="tests/"><img src="https://img.shields.io/badge/tests-109%20passing-brightgreen?style=flat-square" alt="Tests"></a>
   <a href="#benchmarks"><img src="https://img.shields.io/badge/token%20savings-97%25-purple?style=flat-square" alt="Token Savings"></a>
