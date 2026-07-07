@@ -99,6 +99,38 @@ _DEFINITION_QUERIES: dict[str, str] = {
 # Alias for shared queries
 _DEFINITION_QUERIES["tsx"] = _DEFINITION_QUERIES["typescript"]
 _DEFINITION_QUERIES["jsx"] = _DEFINITION_QUERIES["javascript"]
+_DEFINITION_QUERIES["php"] = """
+    (function_definition name: (name) @name) @definition.function
+    (class_declaration name: (name) @name) @definition.class
+    (method_declaration name: (name) @name) @definition.method
+"""
+_DEFINITION_QUERIES["csharp"] = """
+    (method_declaration name: (identifier) @name) @definition.method
+    (class_declaration name: (identifier) @name) @definition.class
+    (interface_declaration name: (identifier) @name) @definition.interface
+    (struct_declaration name: (identifier) @name) @definition.type
+    (enum_declaration name: (identifier) @name) @definition.type
+"""
+_DEFINITION_QUERIES["ruby"] = """
+    (method name: (identifier) @name) @definition.method
+    (class name: (constant) @name) @definition.class
+    (module name: (constant) @name) @definition.class
+"""
+_DEFINITION_QUERIES["kotlin"] = """
+    (function_declaration (simple_identifier) @name) @definition.function
+    (class_declaration (type_identifier) @name) @definition.class
+"""
+_DEFINITION_QUERIES["swift"] = """
+    (function_declaration name: (simple_identifier) @name) @definition.function
+    (class_declaration name: (type_identifier) @name) @definition.class
+    (protocol_declaration name: (type_identifier) @name) @definition.interface
+"""
+_DEFINITION_QUERIES["scala"] = """
+    (function_definition name: (identifier) @name) @definition.function
+    (class_definition name: (identifier) @name) @definition.class
+    (trait_definition name: (identifier) @name) @definition.interface
+    (object_definition name: (identifier) @name) @definition.class
+"""
 
 # Node types that represent references (calls, usages)
 _CALL_NODE_TYPES = {
@@ -404,6 +436,7 @@ class TreeSitterParser:
                 "type_identifier",
                 "property_identifier",
                 "field_identifier",
+                "name",
             ):
                 return self._node_text(child, source)
             # For declarators (C/C++)

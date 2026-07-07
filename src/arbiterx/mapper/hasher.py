@@ -28,6 +28,13 @@ class FileHasher:
             ".mypy_cache",
             ".pytest_cache",
             "target",
+            "bin",
+            "obj",
+            "vendor",
+            ".next",
+            ".nuxt",
+            "packages",
+            ".angular",
         }
     )
 
