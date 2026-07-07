@@ -1,6 +1,10 @@
+---
+description: Review code against the 10 engineering rules. Use when reviewing diffs or files.
+---
+
 # ArbiterX Review
 
-Review the current diff (or specified files) against the 10 engineering arbiterxs.
+Review the current diff (or specified files) against the 10 engineering rules.
 
 ## Instructions
 

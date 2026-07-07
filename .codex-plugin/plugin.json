@@ -14,18 +14,18 @@
   "skills": [
     {
       "name": "arbiterx",
-      "file": "skills/arbiterx.md",
+      "file": "skills/arbiterx/SKILL.md",
       "alwaysOn": true,
       "description": "Engineering discipline rules — always active"
     },
     {
       "name": "arbiterx-review",
-      "file": "skills/arbiterx-review.md",
+      "file": "skills/arbiterx-review/SKILL.md",
       "description": "Review code against engineering rules"
     },
     {
       "name": "arbiterx-gate",
-      "file": "skills/arbiterx-gate.md",
+      "file": "skills/arbiterx-gate/SKILL.md",
       "description": "Run quality gate on generated code"
     }
   ],

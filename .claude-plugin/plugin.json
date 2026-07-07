@@ -6,33 +6,5 @@
     "name": "Neel Patel",
     "url": "https://github.com/NeelPrime"
   },
-  "homepage": "https://github.com/NeelPrime/arbiterx",
-  "install": {
-    "command": "pip install arbiterx-gate",
-    "checkCommand": "arbiterx --version",
-    "instructions": "Requires Python 3.9+. Install with: pip install arbiterx-gate"
-  },
-  "setup": {
-    "command": "arbiterx init",
-    "description": "Initialize ArbiterX in the current project"
-  },
-  "skills": [
-    {
-      "name": "arbiterx",
-      "file": "skills/arbiterx.md",
-      "alwaysOn": true,
-      "description": "Engineering discipline rules — always active"
-    },
-    {
-      "name": "arbiterx-review",
-      "file": "skills/arbiterx-review.md",
-      "description": "Review code against engineering rules"
-    },
-    {
-      "name": "arbiterx-gate",
-      "file": "skills/arbiterx-gate.md",
-      "description": "Run quality gate on generated code"
-    }
-  ],
-  "hooks": "hooks/hooks.json"
+  "homepage": "https://github.com/NeelPrime/arbiterx"
 }

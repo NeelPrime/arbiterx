@@ -1,3 +1,7 @@
+---
+description: Run quality gate on generated code. Scores 0-100, checks security, robustness, efficiency.
+---
+
 # ArbiterX Gate
 
 Run a quality gate on the last generated code or a specified file.
