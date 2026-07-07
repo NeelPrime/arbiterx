@@ -164,9 +164,7 @@ class Indexer:
         use_parallel = workers > 1 and len(files_to_index) >= self.PARALLEL_THRESHOLD
 
         if use_parallel:
-            total_symbols, total_edges = self._index_parallel(
-                files_to_index, root_path, workers
-            )
+            total_symbols, total_edges = self._index_parallel(files_to_index, root_path, workers)
         else:
             total_symbols, total_edges = self._index_sequential(files_to_index, root_path)
 
@@ -225,8 +223,7 @@ class Indexer:
 
         with ProcessPoolExecutor(max_workers=workers) as pool:
             futures = {
-                pool.submit(_parse_file_worker, str(fp)): str(fp)
-                for fp, _, _ in files_to_index
+                pool.submit(_parse_file_worker, str(fp)): str(fp) for fp, _, _ in files_to_index
             }
 
             for future in as_completed(futures):
