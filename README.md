@@ -153,7 +153,7 @@ pip install -e .
 
 ```bash
 arbiterx --version
-# arbiterx 0.2.0
+# arbiterx 0.3.0
 ```
 
 > **Requirements:** Python 3.9+ · No system dependencies · Works offline for local models

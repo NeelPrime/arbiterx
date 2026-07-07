@@ -250,7 +250,7 @@ class PluginLoader:
             content = path.read_text(encoding="utf-8")
 
             name = path.stem
-            version = "0.2.0"
+            version = "0.3.0"
 
             # Try to extract version from module
             for line in content.split("\n"):
