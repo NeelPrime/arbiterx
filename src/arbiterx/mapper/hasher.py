@@ -16,25 +16,71 @@ class FileHasher:
 
     SKIP_DIRS = frozenset(
         {
+            # Version control
             ".git",
+            ".svn",
+            ".hg",
+            # ArbiterX
             ".arbiterx",
+            # JavaScript / Node
             "node_modules",
+            "bower_components",
+            ".next",
+            ".nuxt",
+            ".angular",
+            ".cache",
+            # Python
             "__pycache__",
             ".venv",
             "venv",
-            "dist",
-            "build",
             ".tox",
             ".mypy_cache",
             ".pytest_cache",
-            "target",
+            ".eggs",
+            "egg-info",
+            "wheels",
+            # Build outputs
+            "dist",
+            "build",
+            "_build",
+            "out",
+            # .NET / C#
             "bin",
             "obj",
+            # Java / Kotlin / Gradle
+            ".gradle",
+            # Rust
+            "target",
+            ".cargo",
+            # Go (no common skip needed — go builds in-place)
+            # Zig
+            "zig-cache",
+            "zig-out",
+            # PHP
             "vendor",
-            ".next",
-            ".nuxt",
+            # Ruby
+            ".bundle",
+            # Elixir
+            "deps",
+            # Swift / iOS
+            "Pods",
+            "DerivedData",
+            # Dart / Flutter
+            ".dart_tool",
+            ".pub-cache",
+            # Terraform
+            ".terraform",
+            # IDE / Editor
+            ".idea",
+            ".vs",
+            ".vscode",
+            # Coverage / Testing
+            "coverage",
+            ".nyc_output",
+            # Misc
+            "tmp",
+            "logs",
             "packages",
-            ".angular",
         }
     )
 
