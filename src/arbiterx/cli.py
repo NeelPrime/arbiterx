@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import typer
@@ -66,12 +67,21 @@ def build_map(
     status: bool = typer.Option(
         False, "--status", "-s", help="Show current map status instead of rebuilding."
     ),
+    workers: int = typer.Option(
+        1, "--workers", "-w", help="Number of parallel workers (0 = auto-detect CPU cores)."
+    ),
+    force: bool = typer.Option(
+        False, "--force", "-f", help="Force re-index all files, ignoring cache."
+    ),
     root: Path = typer.Argument(Path("."), help="Root path of the repository."),
 ) -> None:
     """Build or update the codebase map.
 
     Parses all supported source files, extracts symbols and references,
     and stores them in the local SQLite map database.
+
+    Incremental by default — only re-indexes files that changed since last run.
+    Use --force to re-index everything. Use --workers for parallel indexing.
     """
     import time
 
@@ -106,12 +116,15 @@ def build_map(
         console.print("[yellow]No .arbiterx/ found. Running 'init' first...[/yellow]")
         arbiterx_dir.mkdir(parents=True, exist_ok=True)
 
-    console.print("[bold]Building codebase map...[/bold]")
+    mode = "parallel" if workers != 1 else "incremental"
+    if force:
+        mode = "full rebuild"
+    console.print(f"[bold]Building codebase map ({mode})...[/bold]")
     start = time.time()
 
     store = MapStore(db_path)
     indexer = Indexer(store)
-    result = indexer.index_repo(root.resolve())
+    result = indexer.index_repo(root.resolve(), workers=workers, force=force)
 
     elapsed = time.time() - start
     store.close()
@@ -119,11 +132,15 @@ def build_map(
     table = Table(title="Map Built Successfully")
     table.add_column("Metric", style="cyan")
     table.add_column("Value", style="green")
-    table.add_row("Files indexed", str(result["files"]))
-    table.add_row("Symbols extracted", str(result["symbols"]))
-    table.add_row("Reference edges", str(result["edges"]))
+    table.add_row("Files total", str(result.files_total))
+    table.add_row("Files indexed", str(result.files_indexed))
+    table.add_row("Files skipped (unchanged)", str(result.files_skipped))
+    table.add_row("Symbols extracted", str(result.symbols))
+    table.add_row("Reference edges", str(result.edges))
     table.add_row("Time", f"{elapsed:.2f}s")
     table.add_row("Database size", f"{db_path.stat().st_size / 1024:.1f} KB")
+    if workers > 1 or workers == 0:
+        table.add_row("Workers", str(workers if workers > 0 else (os.cpu_count() or 4)))
     console.print(table)
 
 

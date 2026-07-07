@@ -88,12 +88,12 @@ class Calculator:
         indexer = Indexer(store)
         result = indexer.index_repo(sample_repo)
 
-        assert "files" in result
-        assert "symbols" in result
-        assert "edges" in result
-        assert result["files"] == 3
-        assert result["symbols"] > 0
-        assert result["edges"] > 0
+        assert hasattr(result, "files_total")
+        assert hasattr(result, "symbols")
+        assert hasattr(result, "edges")
+        assert result.files_total == 3
+        assert result.symbols > 0
+        assert result.edges > 0
         store.close()
 
     def test_index_repo_stores_files(self, store: MapStore, sample_repo: Path) -> None:
@@ -161,10 +161,14 @@ class Calculator:
         """Running index_repo twice should not create duplicate symbols."""
         indexer = Indexer(store)
         first_result = indexer.index_repo(sample_repo)
-        second_result = indexer.index_repo(sample_repo)
 
-        # Symbol counts should be the same both times
-        assert first_result["symbols"] == second_result["symbols"]
+        # Second run should skip all files (unchanged) — incremental behavior
+        second_result = indexer.index_repo(sample_repo)
+        assert second_result.files_skipped == first_result.files_total
+
+        # Force re-index to verify no duplicates are created
+        third_result = indexer.index_repo(sample_repo, force=True)
+        assert first_result.symbols == third_result.symbols
 
         # Verify by querying: each symbol name should appear once per file
         main_results = store.get_symbols_by_name("main")
@@ -205,7 +209,7 @@ def helper(name: str) -> str:
         result = indexer.index_repo(sample_repo)
 
         # Should only have 3 Python files
-        assert result["files"] == 3
+        assert result.files_total == 3
         all_files = store.get_all_files()
         for f in all_files:
             assert f["path"].endswith(".py")
