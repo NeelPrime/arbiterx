@@ -146,6 +146,16 @@ class FileHasher:
 
         return changed
 
-    def _should_skip(self, path: Path) -> bool:
-        """Check whether a file path should be skipped during hashing."""
+    def _should_skip(self, path: Path, root: Path | None = None) -> bool:
+        """Check whether a file path should be skipped during hashing.
+
+        Uses relative path from root to avoid false positives from
+        system directories (e.g., /tmp in pytest paths).
+        """
+        if root is not None:
+            try:
+                rel = path.relative_to(root)
+                return any(part in self.SKIP_DIRS for part in rel.parts)
+            except ValueError:
+                pass
         return any(part in self.SKIP_DIRS for part in path.parts)

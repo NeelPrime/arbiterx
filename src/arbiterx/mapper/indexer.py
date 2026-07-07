@@ -121,7 +121,7 @@ class Indexer:
         source_files: list[Path] = []
         for file_path in sorted(root_path.rglob("*")):
             if file_path.is_file() and detect_language(file_path) is not None:
-                if not self.hasher._should_skip(file_path):
+                if not self.hasher._should_skip(file_path, root=root_path):
                     source_files.append(file_path)
 
         # Determine which files need re-indexing (incremental)
