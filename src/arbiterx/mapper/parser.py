@@ -160,6 +160,9 @@ class TreeSitterParser:
         self._grammars: dict[str, tree_sitter.Language] = {}
         self._parser = tree_sitter.Parser()
 
+    # Maximum file size to parse (1 MB) — skip larger files to avoid OOM
+    MAX_FILE_SIZE = 1_048_576
+
     def parse_file(self, path: Path) -> list[Symbol]:
         """Parse a source file and return extracted symbols.
 
@@ -170,6 +173,10 @@ class TreeSitterParser:
             List of Symbol instances found in the file.
         """
         from arbiterx.mapper.languages import detect_language
+
+        # Skip files larger than threshold to prevent OOM
+        if path.stat().st_size > self.MAX_FILE_SIZE:
+            return []
 
         source = path.read_bytes()
         language = detect_language(path)
@@ -195,6 +202,10 @@ class TreeSitterParser:
             List of Edge instances found in the file.
         """
         from arbiterx.mapper.languages import detect_language
+
+        # Skip files larger than threshold to prevent OOM
+        if path.stat().st_size > self.MAX_FILE_SIZE:
+            return []
 
         source = path.read_bytes()
         language = detect_language(path)

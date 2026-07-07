@@ -121,6 +121,23 @@ class QualityGate:
         Returns:
             GateResult with pass/fail, score, issues, and optionally fixed code.
         """
+        # Empty or whitespace-only code cannot pass the gate
+        if not code or not code.strip():
+            return GateResult(
+                passed=False,
+                score=0,
+                issues=[
+                    GateIssue(
+                        severity=Severity.HIGH,
+                        category=Category.COMPLETENESS,
+                        message="Empty or whitespace-only code",
+                        line=0,
+                        suggestion="Provide a complete implementation",
+                    )
+                ],
+                fixed_code=None,
+            )
+
         issues: list[GateIssue] = []
 
         # 1. Syntax check

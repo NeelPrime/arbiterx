@@ -52,22 +52,26 @@ class Indexer:
         total_edges = 0
 
         for file_path in source_files:
-            relative = str(file_path.relative_to(root_path))
-            file_hash = self.hasher.hash_file(file_path)
-            language = detect_language(file_path)
-            if language is None:
+            try:
+                relative = str(file_path.relative_to(root_path))
+                file_hash = self.hasher.hash_file(file_path)
+                language = detect_language(file_path)
+                if language is None:
+                    continue
+
+                file_id = self.store.upsert_file(relative, file_hash, language)
+
+                symbols = self.parser.parse_file(file_path)
+                self.store.upsert_symbols(file_id, symbols)
+                total_symbols += len(symbols)
+
+                edges = self.parser.parse_references(file_path)
+                self.store.clear_edges_for_file(relative)
+                self.store.upsert_edges(edges)
+                total_edges += len(edges)
+            except OSError:
+                # File was deleted, moved, or became unreadable during indexing — skip
                 continue
-
-            file_id = self.store.upsert_file(relative, file_hash, language)
-
-            symbols = self.parser.parse_file(file_path)
-            self.store.upsert_symbols(file_id, symbols)
-            total_symbols += len(symbols)
-
-            edges = self.parser.parse_references(file_path)
-            self.store.clear_edges_for_file(relative)
-            self.store.upsert_edges(edges)
-            total_edges += len(edges)
 
         return {"files": len(source_files), "symbols": total_symbols, "edges": total_edges}
 
@@ -89,21 +93,25 @@ class Indexer:
                 # File was deleted — handled by store cascade
                 continue
 
-            language = detect_language(file_path)
-            if language is None:
+            try:
+                language = detect_language(file_path)
+                if language is None:
+                    continue
+
+                file_hash = self.hasher.hash_file(file_path)
+                file_id = self.store.upsert_file(relative, file_hash, language)
+
+                symbols = self.parser.parse_file(file_path)
+                self.store.upsert_symbols(file_id, symbols)
+                total_symbols += len(symbols)
+
+                edges = self.parser.parse_references(file_path)
+                self.store.clear_edges_for_file(relative)
+                self.store.upsert_edges(edges)
+                total_edges += len(edges)
+            except OSError:
+                # File became unreadable during indexing — skip
                 continue
-
-            file_hash = self.hasher.hash_file(file_path)
-            file_id = self.store.upsert_file(relative, file_hash, language)
-
-            symbols = self.parser.parse_file(file_path)
-            self.store.upsert_symbols(file_id, symbols)
-            total_symbols += len(symbols)
-
-            edges = self.parser.parse_references(file_path)
-            self.store.clear_edges_for_file(relative)
-            self.store.upsert_edges(edges)
-            total_edges += len(edges)
 
         return {"files": len(changed_files), "symbols": total_symbols, "edges": total_edges}
 
