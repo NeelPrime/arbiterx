@@ -1,6 +1,6 @@
 {
   "name": "arbiterx",
-  "version": "0.3.0",
+  "version": "0.4.0b1",
   "description": "Engineering discipline for AI code generation — enforces 10 rules for minimal, robust, unbreakable code with quality gate scoring.",
   "author": {
     "name": "Neel Patel",
