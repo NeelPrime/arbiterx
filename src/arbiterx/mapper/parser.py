@@ -181,9 +181,13 @@ class TreeSitterParser:
     def _load_grammar(self, language: str) -> tree_sitter.Language | None:
         """Load and cache the tree-sitter grammar for a language."""
         if language not in self._grammars:
+            from arbiterx.mapper.languages import _GRAMMAR_NAME_MAP
+
+            grammar_name = _GRAMMAR_NAME_MAP.get(language, language)
             try:
-                self._grammars[language] = tslp.get_language(language)
-            except (KeyError, AttributeError):
+                self._grammars[language] = tslp.get_language(grammar_name)
+            except Exception:
+                # Grammar unavailable — skip silently (LookupError, DownloadError, etc.)
                 return None
         return self._grammars[language]
 
