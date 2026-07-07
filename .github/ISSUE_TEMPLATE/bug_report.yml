@@ -1,0 +1,74 @@
+name: Bug Report
+description: Report a bug in ArbiterX
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - "critical — System crash or data loss"
+        - "high — Major functionality broken"
+        - "medium — Feature degraded but workaround exists"
+        - "low — Minor issue, cosmetic, or edge case"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of the bug
+      placeholder: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Run `arbiterx map` on a repo with...
+        2. Observe error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include error messages if any.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: System details
+      placeholder: |
+        - OS: macOS / Linux / Windows
+        - Python version: 3.x
+        - arbiterx-gate version: 0.x.x
+        - tree-sitter-language-pack version: x.x.x
+    validations:
+      required: false
+
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested Fix (optional)
+      description: If you have an idea for the fix, describe it here.
+    validations:
+      required: false
