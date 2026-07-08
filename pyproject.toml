@@ -47,6 +47,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+mcp = [
+    "mcp>=1.0.0",
+]
 embeddings = [
     "faiss-cpu>=1.7.0",
     "numpy>=1.26.0",

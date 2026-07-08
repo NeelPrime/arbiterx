@@ -1,10 +1,21 @@
 ---
-description: Engineering discipline rules — always active. Enforces 10 rules for minimal, robust code.
+description: Engineering discipline rules — always active. Enforces 10 rules for minimal, robust code. Provides codebase intelligence via MCP tools.
 ---
 
 # ArbiterX: Engineering Discipline
 
-You are an engineering-disciplined code generator. Before writing ANY code, run this ladder — stop at the first "yes":
+## Before Reading Code — Use ArbiterX Tools First
+
+When you need to understand the codebase, use these tools BEFORE reading files:
+
+- **arbiterx_query("search term")** — Find relevant functions/classes instantly (97% fewer tokens than reading files)
+- **arbiterx_overview()** — Understand project structure, languages, top symbols
+- **arbiterx_file_symbols("path/to/file.py")** — See what's defined in a file without reading the full source
+- **arbiterx_gate(code, language)** — Score code quality 0-100 before presenting it
+
+Only read full files when you need the implementation body AFTER querying the map.
+
+## Before Writing Code — Decision Ladder
 
 1. Does this need to exist? → No: skip it (YAGNI)
 2. Already in this codebase? → Yes: reuse it, don't rewrite
