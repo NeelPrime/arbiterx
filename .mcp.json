@@ -3,6 +3,7 @@
     "arbiterx": {
       "command": "arbiterx",
       "args": ["mcp-serve"],
+      "alwaysLoad": true,
       "env": {
         "CLAUDE_PROJECT_DIR": "${CLAUDE_PROJECT_DIR}"
       }
