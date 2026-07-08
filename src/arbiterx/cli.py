@@ -337,5 +337,17 @@ def export_rules(
     console.print(Panel(f"[green]✓ Exported rules to {out_path}[/green]", title="ArbiterX Export"))
 
 
+@app.command(name="mcp-serve")
+def mcp_serve() -> None:
+    """Start the ArbiterX MCP server (stdio transport).
+
+    This runs ArbiterX as a local MCP server that Claude Code can connect to.
+    Exposes tools: arbiterx_query, arbiterx_overview, arbiterx_gate, arbiterx_file_symbols.
+    """
+    from arbiterx.mcp_server import run_server
+
+    run_server()
+
+
 if __name__ == "__main__":
     app()

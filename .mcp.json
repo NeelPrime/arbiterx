@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "arbiterx": {
+      "command": "arbiterx",
+      "args": ["mcp-serve"],
+      "env": {
+        "CLAUDE_PROJECT_DIR": "${CLAUDE_PROJECT_DIR}"
+      }
+    }
+  }
+}
